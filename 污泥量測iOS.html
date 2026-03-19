@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>竹南污水處理廠 - 底泥量測紀錄</title>
+    <style>
+        :root {
+            --primary: #0ea5e9; --primary-dark: #0284c7; --surface: #ffffff;
+            --background: #f1f5f9; --text-main: #1e293b; --text-muted: #64748b; --border: #e2e8f0;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 15px 15px 140px 15px; background-color: var(--background); color: var(--text-main); margin: 0; }
+        h2 { text-align: center; color: var(--primary-dark); font-size: 22px; margin-bottom: 20px; font-weight: 700; letter-spacing: 1px;}
+        .card { background: var(--surface); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); padding: 16px; margin-bottom: 20px; }
+        .info-group { margin-bottom: 12px; }
+        .info-group label { font-weight: 600; font-size: 14px; color: var(--text-muted); display: block; margin-bottom: 6px;}
+        .info-group input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; font-size: 16px; background-color: #f8fafc;}
+        .info-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2); background-color: var(--surface);}
+        .phase-title { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); color: var(--primary-dark); padding: 12px; text-align: center; font-weight: 700; font-size: 16px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #7dd3fc;}
+        .table-responsive { overflow-x: auto; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--border);}
+        table { border-collapse: collapse; width: 100%; min-width: 500px; background-color: var(--surface);}
+        th, td { border: 1px solid var(--border); padding: 8px 4px; text-align: center; font-size: 14px; vertical-align: middle;}
+        th { background-color: #f8fafc; color: var(--text-muted); font-weight: 600; white-space: nowrap;}
+        tr:nth-child(even) td { background-color: #fcfcfc; }
+        td input { width: 90%; height: 36px; border: 1px solid transparent; border-radius: 6px; text-align: center; font-size: 16px; background-color: #f1f5f9; color: var(--text-main); font-weight: 500;}
+        td input:focus { outline: none; border-color: var(--primary); background-color: #fff; box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.3);}
+        .note { color: #ef4444; font-weight: 600; font-size: 13px; text-align: center; background: #fef2f2; padding: 10px; border-radius: 8px; border: 1px dashed #fca5a5;}
+        
+        .bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 10px 15px; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); box-sizing: border-box; z-index: 100; display: flex; flex-direction: column; gap: 10px;}
+        button { width: 100%; max-width: 600px; margin: 0 auto; padding: 14px; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3);}
+        .btn-secondary { background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);}
+        button:active { transform: translateY(2px); }
+
+        #previewArea { display: none; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-top: 20px;}
+        .preview-html table { margin-bottom: 20px; width: 100%; min-width: auto; font-family: '標楷體', 'BiauKai', DFKai-SB, serif; font-size: 12pt;}
+        .preview-html th, .preview-html td { border: 1px solid #000; padding: 0;}
+        .preview-html th { background-color: #e9ecef;}
+    </style>
+</head>
+<body>
+    
+    <div id="inputForm">
+        <h2>💧 各沉澱池底泥量測紀錄</h2>
+        <div class="card">
+            <div class="info-group"><label>📅 量測日期</label><input type="date" id="recordDate" required></div>
+            <div class="info-group"><label>👤 量測人員</label><input type="text" id="operator" placeholder="請輸入姓名 (可空白手簽)"></div>
+        </div>
+        <div class="card"><div class="phase-title">一期各沉澱池底泥量測深度(公分)</div><div id="phase1-container"></div></div>
+        <div class="card"><div class="phase-title">二期各沉澱池底泥量測深度(公分)</div><div id="phase2-container"></div></div>
+        <div class="note">⚠️ 備註: 40cm 採水器全滿，泥量實際大於 40cm</div>
+    </div>
+
+    <div id="previewArea">
+        <h2 style="color:#000;">預覽報表 (可直接截圖或複製)</h2>
+        <div id="previewContent" class="preview-html"></div>
+        <button class="btn-primary" onclick="hidePreview()" style="margin-top: 20px;">⬅️ 返回修改表單</button>
+    </div>
+
+    <div class="bottom-bar" id="bottomBar">
+        <button type="button" class="btn-primary" onclick="generateDoc()">📤 正常下載文件 (.doc)</button>
+        <button type="button" class="btn-secondary" onclick="showPreview()">📱 下載失敗？產生網頁預覽</button>
+    </div>
+
+    <script>
+        document.getElementById('recordDate').valueAsDate = new Date();
+
+        const config = {
+            phase1: { pools: ['初沉池', '二沉池', '混沉池'], rows: 8, cols: ['泥坑', '渠道', '中段', '後段(溢流堰)'] },
+            phase2: { pools: ['初沉池', '二沉池', '混沉池'], rows: 5, cols: ['泥坑', '渠道', '中段(上層)', '上層(溢流堰)', '下層(溢流堰)'] }
+        };
+
+        function buildTableHTML(phaseKey) {
+            const data = config[phaseKey];
+            let html = '';
+            data.pools.forEach(pool => {
+                html += `<div class="table-responsive"><table>`;
+                html += `<tr><th>${pool}</th>`;
+                data.cols.forEach(col => html += `<th>${col}</th>`);
+                html += `</tr>`;
+                for (let i = 1; i <= data.rows; i++) {
+                    html += `<tr><td>${i}池</td>`;
+                    data.cols.forEach((col, colIdx) => {
+                        const inputId = `${phaseKey}_${pool}_${i}_${colIdx}`;
+                        html += `<td><input type="tel" id="${inputId}"></td>`;
+                    });
+                    html += `</tr>`;
+                }
+                html += `</table></div>`;
+            });
+            return html;
+        }
+
+        document.getElementById('phase1-container').innerHTML = buildTableHTML('phase1');
+        document.getElementById('phase2-container').innerHTML = buildTableHTML('phase2');
+
+        function buildUnifiedTableHtml(phaseKey, titleText) {
+            const data = config[phaseKey];
+            const colCount = data.cols.length + 1; 
+
+            let tableHtml = `<table style="border-collapse: collapse; width: 100%; margin-bottom: 15px; text-align: center; font-family: '標楷體', 'BiauKai', serif; font-size: 12pt;">`;
+            
+            tableHtml += `<tr><td colspan="${colCount}" style="text-align:center; font-weight:bold; font-size:14pt; background-color:#fbe5d6; border:1px solid #000; padding:0;"><p style="margin: 6pt 0; font-family: '標楷體', 'BiauKai', serif;">${titleText}</p></td></tr>`;
+            
+            data.pools.forEach(pool => {
+                tableHtml += `<tr><th style="border: 1px solid #000; padding: 0; background-color: #e9ecef;"><p style="margin: 6pt 0; font-family: '標楷體', 'BiauKai', serif;">${pool}</p></th>`;
+                data.cols.forEach(col => tableHtml += `<th style="border: 1px solid #000; padding: 0; background-color: #e9ecef;"><p style="margin: 6pt 0; font-family: '標楷體', 'BiauKai', serif;">${col}</p></th>`);
+                tableHtml += `</tr>`;
+                
+                for (let i = 1; i <= data.rows; i++) {
+                    tableHtml += `<tr><td style="border: 1px solid #000; padding: 0;"><p style="margin: 6pt 0; font-family: '標楷體', 'BiauKai', serif; font-size: 12pt;">${i}池</p></td>`;
+                    data.cols.forEach((col, colIdx) => {
+                        const inputId = `${phaseKey}_${pool}_${i}_${colIdx}`;
+                        const val = document.getElementById(inputId).value || '&nbsp;'; 
+                        tableHtml += `<td style="border: 1px solid #000; padding: 0;"><p style="margin: 6pt 0; font-family: '標楷體', 'BiauKai', serif; font-size: 12pt;">${val}</p></td>`;
+                    });
+                    tableHtml += `</tr>`;
+                }
+            });
+            tableHtml += `</table>`;
+            return tableHtml;
+        }
+
+        function showPreview() {
+            const date = document.getElementById('recordDate').value;
+            const operator = document.getElementById('operator').value || ''; // 允許空白
+
+            const headerInfo = `<div style="font-family: '標楷體', 'BiauKai', serif; font-size: 14pt; font-weight: bold; text-align: center; margin-bottom: 10px;">竹南污水處理廠 - 底泥量測紀錄</div>
+                                <div style="font-family: '標楷體', 'BiauKai', serif; font-size: 12pt; margin-bottom: 15px;">日期：${date} &nbsp;&nbsp; 量測人員：${operator}</div>`;
+            const noteInfo = `<div style="font-family: '標楷體', 'BiauKai', serif; color: red; font-weight: bold; text-align: center; font-size: 12pt; margin-top: 15px;">備註: 40cm採水器全滿,泥量實際大於40cm</div>`;
+            
+            const tables = buildUnifiedTableHtml('phase1', '一期各沉澱池底泥量測深度(公分)') + buildUnifiedTableHtml('phase2', '二期各沉澱池底泥量測深度(公分)');
+            
+            document.getElementById('previewContent').innerHTML = headerInfo + tables + noteInfo;
+            
+            document.getElementById('inputForm').style.display = 'none';
+            document.getElementById('bottomBar').style.display = 'none';
+            document.getElementById('previewArea').style.display = 'block';
+            window.scrollTo(0, 0); 
+        }
+
+        function hidePreview() {
+            document.getElementById('inputForm').style.display = 'block';
+            document.getElementById('bottomBar').style.display = 'flex';
+            document.getElementById('previewArea').style.display = 'none';
+        }
+
+        function generateDoc() {
+            const date = document.getElementById('recordDate').value;
+            const operator = document.getElementById('operator').value || ''; // 允許空白
+
+            const phase1Html = buildUnifiedTableHtml('phase1', '一期各沉澱池底泥量測深度(公分)');
+            const phase2Html = buildUnifiedTableHtml('phase2', '二期各沉澱池底泥量測深度(公分)');
+
+            const content = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head>
+                    <meta charset='utf-8'>
+                    <title>底泥量測紀錄</title>
+                    <style>
+                        @page WordSection1 { size: 21.0cm 29.7cm; margin: 1.27cm; mso-header-margin: 1.27cm; mso-footer-margin: 1.27cm; }
+                        div.WordSection1 { page: WordSection1; }
+                        body, p, table, td, th, div { font-family: '標楷體', 'BiauKai', DFKai-SB, serif !important; font-size: 12pt; }
+                        br.page-break { page-break-before: always; mso-break-type: page-break; }
+                    </style>
+                </head>
+                <body>
+                    <div class="WordSection1">
+                        <div style="text-align: center; font-size: 16pt; font-weight: bold; margin-bottom: 15px; font-family: '標楷體', 'BiauKai', serif;">竹南污水處理廠 - 底泥量測深度紀錄</div>
+                        <div style="font-size: 12pt; margin-bottom: 20px; font-family: '標楷體', 'BiauKai', serif;">日期：${date} &nbsp;&nbsp;&nbsp;&nbsp; 量測人員：${operator}</div>
+                        
+                        ${phase1Html}
+                        
+                        <br class="page-break" clear="all" style="page-break-before:always">
+                        
+                        ${phase2Html}
+                        
+                        <div style="color: red; font-weight: bold; text-align: center; font-size: 12pt; margin-top: 20px; font-family: '標楷體', 'BiauKai', serif;">備註: 40cm採水器全滿,泥量實際大於40cm</div>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            const blob = new Blob(['\ufeff', content], { type: 'application/msword;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            // 若名字空白，檔名就只顯示日期
+            const fileNameSuffix = operator ? `_${operator}` : '';
+            link.download = `竹南廠_底泥紀錄_${date}${fileNameSuffix}.doc`;
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => window.URL.revokeObjectURL(url), 100);
+        }
+    </script>
+</body>
+</html>

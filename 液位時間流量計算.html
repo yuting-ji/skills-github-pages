@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>池體液位流量時間運算系統</title>
+    <script type="text/javascript" nonce="ba8c3ef8b43d4d58bfe4e6f70a0" src="//local.adguard.org?ts=1772489534591&amp;type=content-script&amp;dmn=mail-attachment.googleusercontent.com&amp;url=https%3A%2F%2Fmail-attachment.googleusercontent.com%2Fattachment%2Fu%2F0%2F%3Fui%3D2%26ik%3D5780d94f70%26attid%3D0.1%26permmsgid%3Dmsg-f%3A1858525516304375311%26th%3D19cacf1c35525e0f%26view%3Datt%26zw%26disp%3Dsafe%26saddbat%3DANGjdJ8avQBdEJ3U17F4wxOKC_0rCRr3S5wzumAW4PiPITrSJ-3WElpWn_I4AASS1iDoNWHnWcX3xhMPsKOmlsI5DXyVplPIHvvfHbnOfKRkcmX_K9i68N4nxBf7MGAeHGAaB3hS4EZjFoPh5mgAG6yLH6VWjiksF8U4i9DNsRTiJ8msPNcFLbf2Fj5j4NMew3jI4sN7zxIyIKkLv5tct6TbPZ95hyEMoVOx_vdIo1LHaEJmbekAkG6wh9XElRXmgc0jTG5t98kuKcpReZiAiwEVQMD5UCmZjtwL8DiCoWm8x7_tERtEggWrmz5qy4vbU6Sr5B0cMpWI9v80jJ8mZGcON9glpun1_8ICkCDsCtwwMQLu8mKgYg04xPlSHHeqYu2Eok2GGnWpN8ea4tNmYtHN50XO2X4W0v7UlEDJtXatR2HMHKzciK45gAz9q7SPnsAebHZ-97St6U_E0Ud1H4QBXfTJYk-IM2AFbtNmOinlBAjP37FDIuaeiABYVenJj6-d71aEKWzm7Rn01A4pwDcHsjC59tCOmqBMepjUM3F91kjq2cU0ki194Dag2g8A-QE3UMHA6tnCuanMjZyrL7bIivaw2_3fH4X3L0QcWwA8bTZ_8elWHI8ZAv6ebqKjDMe5_2Q_hGO36NzIN3c8te_TdpfnSUCazdAZVzHXHOD8nikaZZ2qO2ygzqGHIMm4hj9J1wZUaj9HUyaF-I_u1zyB_radC_AaSG7QQOz9oAdIwDryDuWmSH6Cc_7Lrb5UuV4jKQ06vm9U9C7iujwv0KHRTsahC7N5R3XQ3WRVZ-mQWJK67lmNCHmG889Vv9BjkMgCTzZR8V6eq1HVBf1D0JwAohOkEv3d8cmWV7dff1mIIyPp9-Yu-ZD-s4gF2h7lxFtsy5o-9ukLYWgGUhK-p6lKmuU4-22dkUDMPq3hiGxUQoC_A3fKZG-UB-0tqc2tU6FXZ9LbVzR8KeF1pVYnw3vdxp_WEyQ4Xz0mHdGcsw4ce23sGkoLjw5nBE1fXpXU7Bd0ABCVjDk72xn2ISlAP9jX4Bfi6oACYuZrCLdpCw&amp;app=chrome.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="ba8c3ef8b43d4d58bfe4e6f70a0" src="//local.adguard.org?ts=1772489534591&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; font-family: "Microsoft JhengHei", Arial, sans-serif; }
+        .card { margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: none; border-radius: 12px; }
+        .card-header { background-color: #2c3e50; color: white; font-weight: bold; border-radius: 12px 12px 0 0 !important; padding: 15px; text-align: center; font-size: 1.1rem; }
+        .info-box { background-color: #e8f4f8; border: 1px solid #bce0fd; border-radius: 8px; padding: 12px 15px; margin-bottom: 15px; font-size: 0.9rem; color: #34495e; line-height: 1.6; }
+        .info-box strong { color: #2980b9; }
+        .btn-calc { width: 100%; background-color: #27ae60; color: white; font-weight: bold; padding: 12px; }
+        .btn-clear { width: 100%; background-color: #95a5a6; color: white; margin-top: 10px; }
+        .result-box { background-color: #ecf0f1; border-left: 5px solid #e67e22; padding: 15px; margin-top: 15px; white-space: pre-line; font-family: monospace; font-size: 1.1rem; word-break: break-all; }
+        .form-label { font-weight: 600; font-size: 0.85rem; color: #34495e; margin-bottom: 0.2rem; }
+        .section-title { border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-bottom: 15px; color: #2c3e50; font-size: 1rem; font-weight: bold; margin-top: 20px; }
+        .tank-title { font-size: 0.9rem; font-weight: bold; color: #16a085; margin-bottom: 5px; margin-top: 10px; border-bottom: 1px dashed #ccc; padding-bottom: 3px; }
+        .warning-text { color: #d35400; font-weight: bold; }
+        .danger-text { color: #c0392b; font-weight: bold; }
+        @keyframes highlight { 0% { background-color: #d4edda; } 100% { background-color: #fff; } }
+        .auto-filled { animation: highlight 1.5s ease-out; border-color: #28a745; }
+    </style>
+</head>
+<body>
+
+<div class="container py-3" style="max-width: 600px;">
+    <h4 class="text-center mb-4 fw-bold"<br>液位與流量運算系統</h4>
+
+    <div class="card">
+        <div class="card-header">
+            多池動態運算模組
+        </div>
+        <div class="card-body">
+            <form id="formUniversal">
+                
+                <div class="section-title">1. 單池設計參數 (必填)</div>
+                <div class="row g-2 mb-2">
+                    <div class="col-3">
+                        <label class="form-label">池數</label>
+                        <input type="number" step="1" min="1" inputmode="numeric" class="form-control dyn-input" id="num_tanks" value="1" placeholder="數量">
+                    </div>
+                    <div class="col-3">
+                        <label class="form-label">單池長(m)</label>
+                        <input type="number" step="0.01" inputmode="decimal" class="form-control dyn-input" id="pool_length" placeholder="m">
+                    </div>
+                    <div class="col-3">
+                        <label class="form-label">單池寬(m)</label>
+                        <input type="number" step="0.01" inputmode="decimal" class="form-control dyn-input" id="pool_width" placeholder="m">
+                    </div>
+                    <div class="col-3">
+                        <label class="form-label">有效水深</label>
+                        <input type="number" step="0.01" inputmode="decimal" class="form-control dyn-input" id="pool_depth" placeholder="m">
+                    </div>
+                </div>
+
+                <div class="info-box" id="dynamicInfoBox">
+                    請輸入池數、長、寬與水深以建立模型。
+                </div>
+
+                <div class="section-title">2. 系統操作模式</div>
+                <div class="row g-2 mb-3">
+                    <div class="col-12">
+                        <select class="form-select" id="op_mode" style="border: 2px solid #16a085; font-weight: bold; color: #2c3e50; background-color: #eafaf1;">
+                            <option value="fill">📈 蓄水模式 (液位由低上升至高)</option>
+                            <option value="drain">📉 抽水模式 (液位由高下降至低)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section-title">3. 總流量參數</div>
+                <div class="row g-2 mb-2">
+                    <div class="col-6">
+                        <label class="form-label">進水量 Qin (m³/h)</label>
+                        <input type="number" step="0.01" inputmode="decimal" class="form-control" id="qin" placeholder="m³/h">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">出水量 Qout (m³/h)</label>
+                        <input type="number" step="0.01" inputmode="decimal" class="form-control" id="qout" placeholder="m³/h">
+                    </div>
+                </div>
+
+                <div class="section-title">4. 各池液位狀態</div>
+                <div id="levelsContainer">
+                    </div>
+
+                <div class="section-title">5. 時間參數</div>
+                <div class="row g-2 mb-3">
+                    <div class="col-12">
+                        <label class="form-label">歷時 (格式 HH:MM)</label>
+                        <div class="input-group">
+                            <input type="number" inputmode="numeric" class="form-control" id="time_h" placeholder="時">
+                            <span class="input-group-text">:</span>
+                            <input type="number" inputmode="numeric" class="form-control" id="time_m" placeholder="分">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-2 mt-4">
+                    <div class="col-8">
+                        <button type="button" class="btn btn-calc" onclick="calculate()">執行計算</button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-clear" onclick="clearForm()">全部清除</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="result-box" id="resultBox">
+                等待計算... 請先設定上方參數。
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center text-muted mt-3 mb-5" style="font-size: 0.85rem;">
+        池體液位流量時間運算模組
+    </div>
+</div>
+
+<script>
+    const dynInputs = document.querySelectorAll('.dyn-input');
+    dynInputs.forEach(input => {
+        input.addEventListener('input', () => {
+            updateInfoBox();
+            if (input.id === 'num_tanks') renderLevelFields();
+        });
+    });
+
+    window.onload = () => { renderLevelFields(); };
+
+    function getPoolSpecs() {
+        let n = parseInt(document.getElementById('num_tanks').value);
+        if (isNaN(n) || n < 1) n = 1;
+
+        let l = parseFloat(document.getElementById('pool_length').value);
+        let w = parseFloat(document.getElementById('pool_width').value);
+        let d = parseFloat(document.getElementById('pool_depth').value);
+        
+        if (isNaN(l) || isNaN(w)) return null;
+        
+        let single_area = l * w;
+        let total_area = single_area * n;
+        let total_volume = isNaN(d) ? null : total_area * d;
+        
+        return { count: n, length: l, width: w, depth: d, single_area: single_area, total_area: total_area, total_volume: total_volume };
+    }
+
+    function updateInfoBox() {
+        let specs = getPoolSpecs();
+        let box = document.getElementById('dynamicInfoBox');
+        if (!specs) { box.innerHTML = '請輸入池數、長、寬與有效水深以建立池體模型。'; return; }
+
+        let html = `<strong>【多池連動模型資訊】</strong> (共 ${specs.count} 池)<br>
+                    • <strong>單池面積：</strong>${specs.single_area.toFixed(2)} m² <br>
+                    • <strong>總計運算面積：</strong>${specs.total_area.toFixed(2)} m²`;
+        if (specs.total_volume !== null) {
+            html += `<br>• <strong>總滿水極限容量：</strong>${specs.total_volume.toFixed(2)} m³ (極限水深: ${specs.depth} m)`;
+        }
+        box.innerHTML = html;
+    }
+
+    function renderLevelFields() {
+        let n = parseInt(document.getElementById('num_tanks').value);
+        if (isNaN(n) || n < 1) n = 1;
+        
+        let container = document.getElementById('levelsContainer');
+        let oldValues = {};
+        container.querySelectorAll('input').forEach(input => { oldValues[input.id] = input.value; });
+
+        let html = '';
+        for(let i = 1; i <= n; i++) {
+            html += `
+            <div class="tank-title">💧 第 ${i} 池液位 (請輸入實際的高低水位)</div>
+            <div class="row g-2 mb-2">
+                <div class="col-6">
+                    <label class="form-label">低液位 (m)</label>
+                    <input type="number" step="0.01" inputmode="decimal" class="form-control level-input" id="level_low_${i}" placeholder="較低的水位">
+                </div>
+                <div class="col-6">
+                    <label class="form-label">高液位 (m)</label>
+                    <input type="number" step="0.01" inputmode="decimal" class="form-control level-input" id="level_high_${i}" placeholder="較高的水位">
+                </div>
+            </div>`;
+        }
+        container.innerHTML = html;
+
+        for(let id in oldValues) {
+            if(document.getElementById(id)) document.getElementById(id).value = oldValues[id];
+        }
+    }
+
+    function setInputValue(id, value) {
+        const el = document.getElementById(id);
+        if(el) {
+            el.value = value; el.classList.remove('auto-filled');
+            void el.offsetWidth; el.classList.add('auto-filled');
+        }
+    }
+
+    function checkLevelLimit(level, maxDepth, poolName, logArray) {
+        if (!isNaN(level)) {
+            if (!isNaN(maxDepth) && level > maxDepth) {
+                logArray.push(`<span class="danger-text">⚠️ 警告: ${poolName} (${level.toFixed(2)}m) 超出水深極限 (${maxDepth}m)！</span>`);
+            } else if (level < 0) {
+                logArray.push(`<span class="danger-text">⚠️ 警告: ${poolName} (${level.toFixed(2)}m) 低於 0m，恐有抽空風險！</span>`);
+            }
+        }
+    }
+
+    function calculate() {
+        let specs = getPoolSpecs();
+        let resultBox = document.getElementById('resultBox');
+        let log = [];
+
+        if (!specs) {
+            resultBox.innerHTML = '<span class="danger-text">❌ 錯誤：請先於「第一區」輸入單池的長度與寬度！</span>';
+            return;
+        }
+
+        document.querySelectorAll('.form-control').forEach(el => el.classList.remove('auto-filled'));
+
+        // 讀取操作模式與符號方向
+        let opMode = document.getElementById('op_mode').value;
+        let modeSign = (opMode === 'fill') ? 1 : -1; // fill為正, drain為負
+
+        let qin = parseFloat(document.getElementById('qin').value);
+        let qout = parseFloat(document.getElementById('qout').value);
+        let time_h = parseFloat(document.getElementById('time_h').value) || 0;
+        let time_m = parseFloat(document.getElementById('time_m').value) || 0;
+        let total_hours = time_h + (time_m / 60);
+
+        let hasFlow = !isNaN(qin) && !isNaN(qout);
+        let hasTime = total_hours > 0;
+
+        // 收集各池資料
+        let knownVolChange = 0; // 帶有正負號的總體積變化
+        let missingLowCount = 0; let missingHighCount = 0;
+        let missingLowIds = []; let missingHighIds = [];
+        let allLevelsFilled = true; 
+        let hasAnyValidLevel = false;
+
+        for (let i = 1; i <= specs.count; i++) {
+            let low = parseFloat(document.getElementById(`level_low_${i}`).value);
+            let high = parseFloat(document.getElementById(`level_high_${i}`).value);
+
+            checkLevelLimit(low, specs.depth, `第${i}池低液位`, log);
+            checkLevelLimit(high, specs.depth, `第${i}池高液位`, log);
+
+            if (!isNaN(low) && !isNaN(high)) {
+                // 自動防呆：如果操作員填反了，自動修正並取絕對值差
+                let dH_abs = Math.abs(high - low);
+                if (low > high) {
+                    log.push(`<span class="warning-text">提示: 第${i}池低液位大於高液位，系統已自動校正順序。</span>`);
+                }
+                // 套用選單決定的正負號
+                knownVolChange += modeSign * dH_abs * specs.single_area;
+                hasAnyValidLevel = true;
+            } else if (isNaN(low) && !isNaN(high)) {
+                missingLowCount++; missingLowIds.push(i);
+                allLevelsFilled = false; hasAnyValidLevel = true;
+            } else if (!isNaN(low) && isNaN(high)) {
+                missingHighCount++; missingHighIds.push(i);
+                allLevelsFilled = false; hasAnyValidLevel = true;
+            }
+        }
+
+        let isCalculatingLevels = (missingLowCount > 0 || missingHighCount > 0);
+        let modeName = (opMode === 'fill') ? "📈 蓄水" : "📉 抽水";
+
+        // --- 功能 1: 計算歷時 ---
+        if (hasFlow && allLevelsFilled && hasAnyValidLevel && !hasTime) {
+            log.push(`【模式：計算歷時 (${modeName})】`);
+            let netFlow = qin - qout; 
+
+            // 防呆檢核流量方向是否與模式相符
+            if (opMode === 'fill' && netFlow <= 0) {
+                log.push(`<span class="danger-text">⚠️ 警告: 蓄水模式下，進水量必須大於出水量！</span>`);
+            } else if (opMode === 'drain' && netFlow >= 0) {
+                log.push(`<span class="danger-text">⚠️ 警告: 抽水模式下，出水量必須大於進水量！</span>`);
+            }
+
+            log.push(`各池總體積變化 (dV): ${Math.abs(knownVolChange).toFixed(2)} m³`);
+            log.push(`系統淨流量 (Qnet): ${Math.abs(netFlow).toFixed(2)} m³/h`);
+            
+            if (netFlow === 0) {
+                log.push(`<span class="warning-text">錯誤: 系統淨流量為 0，無法計算時間。</span>`);
+            } else {
+                let t_hours = Math.abs(knownVolChange / netFlow); // 時間永遠為正
+
+                let final_h = Math.floor(t_hours);
+                let final_m = Math.round((t_hours - final_h) * 60);
+                if (final_m === 60) { final_h += 1; final_m = 0; }
+                
+                setInputValue('time_h', final_h);
+                setInputValue('time_m', final_m);
+                log.push(`➤ 計算歷時: ${final_h} 小時 ${final_m} 分`);
+            }
+        }
+        
+        // --- 功能 2: 推算進水量 ---
+        else if (hasTime && !isNaN(qout) && isNaN(qin) && allLevelsFilled && hasAnyValidLevel) {
+            log.push(`【模式：推算進水量 (${modeName})】`);
+            // 代數公式: Qin = Qout + (dV / t)
+            let calcQin = qout + (knownVolChange / total_hours);
+            
+            if(calcQin < 0) log.push(`<span class="danger-text">⚠️ 警告: 推算進水量為負值 (${calcQin.toFixed(2)} m³/h)，物理上不合理！</span>`);
+            
+            setInputValue('qin', calcQin.toFixed(2));
+            log.push(`各池總體積變化 (dV): ${Math.abs(knownVolChange).toFixed(2)} m³`);
+            log.push(`➤ 推算總進水量 Qin: ${calcQin.toFixed(2)} m³/h`);
+        }
+
+        // --- 功能 3: 推算出水量 ---
+        else if (hasTime && !isNaN(qin) && isNaN(qout) && allLevelsFilled && hasAnyValidLevel) {
+            log.push(`【模式：推算出水量 (${modeName})】`);
+            // 代數公式: Qout = Qin - (dV / t)
+            let calcQout = qin - (knownVolChange / total_hours);
+            
+            if(calcQout < 0) log.push(`<span class="danger-text">⚠️ 警告: 推算出水量為負值 (${calcQout.toFixed(2)} m³/h)，物理上不合理！</span>`);
+            
+            setInputValue('qout', calcQout.toFixed(2));
+            log.push(`各池總體積變化 (dV): ${Math.abs(knownVolChange).toFixed(2)} m³`);
+            log.push(`➤ 推算總出水量 Qout: ${calcQout.toFixed(2)} m³/h`);
+        }
+
+        // --- 功能 4 & 5: 推算未知的液位 ---
+        else if (hasFlow && hasTime && isCalculatingLevels) {
+            log.push(`【模式：動態推算未知液位 (${modeName})】`);
+            let netFlow = qin - qout;
+            let targetVolChange = netFlow * total_hours; // 帶有正負號
+            log.push(`系統理論體積變化 (Qnet * t): ${targetVolChange.toFixed(2)} m³`);
+
+            let remVol = targetVolChange - knownVolChange; // 剩餘體積變化量
+            
+            // 計算每一顆未知池需要變化的絕對水深 (dh_abs)
+            let dh_abs = Math.abs(remVol) / ((missingLowCount + missingHighCount) * specs.single_area);
+            
+            if (missingLowCount > 0 && missingHighCount === 0) {
+                // 求低液位 (已知高液位)。高液位永遠在上面，所以低液位 = 高液位 - 變化水深
+                log.push(`\n推算策略：變化量由 ${missingLowCount} 顆池均攤 (變化水深 ${dh_abs.toFixed(3)} m)`);
+                
+                missingLowIds.forEach(id => {
+                    let high = parseFloat(document.getElementById(`level_high_${id}`).value);
+                    let calcLow = high - dh_abs; 
+                    setInputValue(`level_low_${id}`, calcLow.toFixed(3));
+                    checkLevelLimit(calcLow, specs.depth, `第${id}池推算結果`, log);
+                    log.push(`➤ 推算 [第 ${id} 池] 低液位: ${calcLow.toFixed(3)} m`);
+                });
+            }
+            else if (missingHighCount > 0 && missingLowCount === 0) {
+                 // 求高液位 (已知低液位)。高液位永遠在上面，所以高液位 = 低液位 + 變化水深
+                 log.push(`\n推算策略：變化量由 ${missingHighCount} 顆池均攤 (變化水深 ${dh_abs.toFixed(3)} m)`);
+
+                 missingHighIds.forEach(id => {
+                    let low = parseFloat(document.getElementById(`level_low_${id}`).value);
+                    let calcHigh = low + dh_abs;
+                    setInputValue(`level_high_${id}`, calcHigh.toFixed(3));
+                    checkLevelLimit(calcHigh, specs.depth, `第${id}池推算結果`, log);
+                    log.push(`➤ 推算 [第 ${id} 池] 高液位: ${calcHigh.toFixed(3)} m`);
+                });
+            }
+            else {
+                log.push(`<span class="danger-text">❌ 錯誤：無法同時推算高液位與低液位。</span>`);
+            }
+        }
+        else {
+            log.push(`<span class="warning-text">參數不足或組合無法判定。</span>`);
+            log.push(`請確認已輸入：\n1. 雙流量 (求時間) \n2. 時間 + 單流量 (求另一流量) \n3. 時間 + 雙流量 (求未知液位)`);
+        }
+
+        resultBox.innerHTML = log.join('\n');
+    }
+
+    function clearForm() {
+        document.querySelectorAll('.form-control').forEach(el => {
+            if(el.id !== 'num_tanks') { el.value = ''; el.classList.remove('auto-filled'); }
+        });
+        document.getElementById('num_tanks').value = 1;
+        // 不重置下拉選單，保留使用者上一次的選擇習慣
+        renderLevelFields(); 
+        updateInfoBox();
+        document.getElementById('resultBox').innerHTML = '已清除，請重新輸入參數。';
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
