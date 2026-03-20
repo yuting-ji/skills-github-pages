@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sewage</title>
+    <style>
+        /* CSS 樣式：美化與排版 */
+        
+        /* 基礎重設，確保各瀏覽器一致 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* 使用乾淨的無襯線字體 */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            /* 淺灰色背景，避免純白刺眼 */
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* 讓內容垂直居中 */
+            padding: 20px;
+        }
+
+        .container {
+            /* 主要容器 */
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 400px; /* 限制最大寬度，在平板或電腦上不會太散 */
+            padding: 40px 30px;
+            border-radius: 16px; /* 圓角 */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); /* 淡淡的陰影，增加質感 */
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #2c3e50; /* 深藍灰色 */
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+        }
+
+        .button-group {
+            /* 按鈕區域 */
+            display: flex;
+            flex-direction: column; /* 按鈕直向排列，適合手機 */
+            gap: 20px; /* 按鈕之間的間距 */
+        }
+
+        /* 按鈕基礎樣式 */
+        .portal-btn {
+            display: block;
+            text-decoration: none; /* 移除超連結下劃線 */
+            padding: 16px 20px;
+            background-color: #3498db; /* 主色調：藍色 */
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease; /* 動畫過渡效果 */
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2); /* 按鈕陰影 */
+        }
+
+        /* 手機端觸摸或電腦端滑鼠滑過時的效果 */
+        .portal-btn:hover, .portal-btn:active {
+            background-color: #2980b9; /* 顏色變深 */
+            transform: translateY(-2px); /* 稍微向上浮起 */
+            box-shadow: 0 6px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        /* 為了讓兩個按鈕有點區別，給第二個按鈕不同的顏色 (可選) */
+        .portal-btn.secondary {
+            background-color: #2ecc71; /* 綠色 */
+            box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2);
+        }
+        
+        .portal-btn.secondary:hover, .portal-btn.secondary:active {
+            background-color: #27ae60;
+            box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
+        }
+
+        /* 頁尾微小文字 */
+        footer {
+            margin-top: 50px;
+            font-size: 12px;
+            color: #bdc3c7;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1目錄</h1>
+            <p class="subtitle">請選擇要使用的項目</p>
+        </header>
+
+        <nav class="button-group">
+            <a href="Levelcounting.html" class="portal-btn"調節液位流量計算</a>
+            <a href="Levelcounting2.html" class="portal-btn"自訂池體液位流量計算</a>
+            <a href="sludgenote.html" class="portal-btn secondary">污泥量測記錄</a>
+        </nav>
+
+        <footer>
+            <p>Just A Site</p>
+        </footer>
+    </div>
+
+</body>
+</html>
