@@ -153,9 +153,6 @@
         return (d.getFullYear() - 1911) + "." + String(d.getMonth() + 1).padStart(2, '0') + "." + String(d.getDate()).padStart(2, '0');
     }
 
-    // =========================================================
-    // 嚴格依照 115.03.10.doc 格式匯出 Word (版面直式、精準邊界)
-    // =========================================================
     function exportToWord() {
         let docDate = formatROC(document.getElementById('docDate').value);
         let sampler = document.getElementById('docSampler').value || "";
@@ -174,7 +171,6 @@
             let cond = row.querySelector('.i-cond').value || "";
             let other = row.querySelector('.i-other').value || "";
 
-            // 外觀格式還原：(透明 \r □微濁 ...
             let appArr = ['透明', '微濁', '混濁', '其他'];
             let appStr = appArr.map(a => `${a === app ? '(' : '□'}${a}`).join("<br style='mso-data-placement:same-cell;'>");
 
@@ -227,8 +223,11 @@
             rowsHtml += `<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
         }
 
-        // 版面設定：A4 直式 (595.3pt 841.9pt)
-        // 邊界：上 2cm (56.7pt)，下/左/右 1.5cm (42.5pt)
+        // ==========================================
+        // 精確的 Word 頁面設定：
+        // A4直式: 595.3pt x 841.9pt
+        // 邊界: 上 21.3pt (0.75cm), 下 7.1pt (0.25cm), 左 42.5pt (1.5cm), 右 42.5pt (1.5cm)
+        // ==========================================
         let wordSource = `
         <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
         <head>
@@ -237,9 +236,9 @@
             <style>
                 @page WordSection1 {
                     size: 595.3pt 841.9pt; 
-                    margin: 56.7pt 42.5pt 42.5pt 42.5pt; 
-                    mso-header-margin: 35.4pt;
-                    mso-footer-margin: 35.4pt;
+                    margin: 21.3pt 42.5pt 7.1pt 42.5pt; 
+                    mso-header-margin: 10.0pt;
+                    mso-footer-margin: 5.0pt;
                     mso-paper-source: 0;
                 }
                 div.WordSection1 { page: WordSection1; }
