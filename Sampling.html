@@ -35,7 +35,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 10px;
-            min-width: 900px; /* 保持表格不會過度擠壓，手機需左右滑動 */
+            min-width: 900px;
             font-size: 14px;
         }
         th, td {
@@ -55,52 +55,29 @@
             border: 1px solid #ccc;
             border-radius: 3px;
             font-family: inherit;
-            font-size: 14px;
+            font-size: 13px;
         }
         .sm-input { width: auto !important; display: inline-block; }
-        .flex-input-group { display: flex; align-items: center; gap: 4px; }
+        .flex-input-group { display: flex; align-items: center; justify-content: center; gap: 4px; }
 
-        /* --- 針對手機優化的滿版大按鈕區塊 --- */
-        .btn-group { 
-            display: flex; 
-            flex-wrap: wrap; 
-            justify-content: center; 
-            gap: 12px; 
-            margin-top: 25px; 
+        /* 按鈕區 */
+        .btn-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 25px; margin-bottom: 20px; }
+        button {
+            padding: 10px 18px; font-size: 16px; cursor: pointer; border: none;
+            border-radius: 5px; color: white; font-weight: bold; transition: background-color 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-        .btn-group button {
-            flex: 1 1 100%; /* 手機預設滿版垂直排列 */
-            padding: 12px; 
-            font-size: 16px; 
-            cursor: pointer; 
-            border: none;
-            border-radius: 6px; 
-            color: white; 
-            font-weight: bold; 
-            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-            transition: all 0.2s;
-        }
-        @media (min-width: 600px) {
-            .btn-group button {
-                flex: 1 1 auto; /* 螢幕夠大時恢復水平排列 */
-                width: auto;
-                min-width: 150px;
-            }
-        }
-        /* 按下時的視覺回饋 */
-        button:active { transform: scale(0.96); opacity: 0.9; }
-
         #addRowBtn { background-color: #27ae60; }
+        #addRowBtn:hover { background-color: #2ecc71; }
         #downloadBtn { background-color: #2980b9; }
+        #downloadBtn:hover { background-color: #3498db; }
         #previewBtn { background-color: #8e44ad; }
-        #exitPreviewBtn { background-color: #e74c3c; }
-        #printPdfBtn { background-color: #f39c12; }
-
-        /* 表格內小按鈕優化 */
-        .action-btn { padding: 6px; font-size: 13px; margin: 3px 0; width: 100%; }
+        #previewBtn:hover { background-color: #9b59b6; }
+        
+        .action-btn { padding: 5px 8px; font-size: 13px; margin: 3px 0; width: 100%; }
         .btn-add-item { background-color: #3498db; }
         .btn-del-sample { background-color: #e74c3c; }
-        .btn-del-item { background-color: #e74c3c; padding: 4px 8px; border-radius: 4px; font-size: 14px; }
+        .btn-del-item { background-color: #e74c3c; padding: 3px 8px; border-radius: 3px; font-size: 12px; }
 
         /* 底部說明與簽章區 */
         .footer-note { font-size: 12px; line-height: 1.4; margin-bottom: 10px; text-align: left; }
@@ -110,7 +87,6 @@
         /* 預覽與列印模式 */
         body.preview-mode { background-color: #fff; padding: 5px; }
         .preview-mode .container { box-shadow: none; padding: 10px; border: none; }
-        .preview-mode .main-action-btn { display: none !important; } /* 預覽時隱藏主功能按鈕 */
         .preview-mode .no-print { display: none !important; }
         .preview-mode input, .preview-mode select {
             border: none; background: transparent; -webkit-appearance: none; appearance: none;
@@ -118,14 +94,19 @@
         }
         .preview-mode .text-left input { text-align: left; }
         
-        /* 預覽專屬按鈕區塊 */
-        .preview-btn-container { display: none; }
-        .preview-mode .preview-btn-container { display: flex; } /* 進入預覽模式時顯示這組按鈕 */
+        .floating-bar {
+            display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            gap: 15px; z-index: 9999; background: rgba(0,0,0,0.8); padding: 12px 25px; border-radius: 30px;
+        }
+        .preview-mode .floating-bar { display: flex; }
+        .floating-bar button { font-size: 15px; padding: 8px 18px; }
+        #exitPreviewBtn { background-color: #e74c3c; }
+        #printPdfBtn { background-color: #f39c12; }
 
         @media print {
             body { background-color: #fff; padding: 0; }
             .container { box-shadow: none; padding: 0; min-width: 100%; border:none; }
-            .no-print, .preview-btn-container, .main-action-btn { display: none !important; }
+            .no-print, .floating-bar { display: none !important; }
             input, select { border: none; background: transparent; appearance: none; padding: 0; margin: 0; color: #000; text-align: center; font-size: 11pt; }
             .text-left input { text-align: left; }
         }
@@ -193,8 +174,7 @@
                 <td width="4%">其他</td>
             </tr>
         </thead>
-        <tbody id="dynamicBody">
-            </tbody>
+        <tbody id="dynamicBodyContainer"></tbody>
         <tfoot>
             <tr>
                 <td colspan="14" style="text-align: center; background-color: #f9f9f9; padding: 2px;">以下空白</td>
@@ -256,44 +236,52 @@
 
 </div>
 
-<div style="max-width: 1000px; margin: 0 auto;">
-    
-    <div class="btn-group main-action-btn" id="mainBtns">
-        <button type="button" id="addRowBtn" onclick="addSample()">新增採樣地點</button>
-        <button type="button" id="previewBtn" onclick="togglePreview(true)">預覽 (截圖 / PDF)</button>
-        <button type="button" id="downloadBtn" onclick="exportToWord()">下載文件 (.doc)</button>
-    </div>
+<div class="btn-group no-print" id="mainBtns">
+    <button type="button" id="addRowBtn" onclick="addSample()">新增採樣地點</button>
+    <button type="button" id="downloadBtn" onclick="exportToWord()">下載文件 (.doc)</button>
+    <button type="button" id="previewBtn" onclick="togglePreview(true)">預覽 (截圖 / PDF)</button>
+</div>
 
-    <div class="btn-group preview-btn-container" id="previewBtns">
-        <button type="button" id="exitPreviewBtn" onclick="togglePreview(false)">返回編輯</button>
-        <button type="button" id="printPdfBtn" onclick="window.print()">列印成 PDF / 截圖</button>
-    </div>
-
+<div class="floating-bar" id="floatBtns">
+    <button type="button" id="exitPreviewBtn" onclick="togglePreview(false)">退出預覽</button>
+    <button type="button" id="printPdfBtn" onclick="window.print()">列印成 PDF</button>
 </div>
 
 <script>
-    // 解決部分舊版手機瀏覽器不支援 valueAsDate 的問題
+    // 取得指定元素的上層 tbody (防彈寫法)
+    function getParentTbody(element) {
+        let el = element;
+        while (el && el.tagName !== 'TBODY') {
+            el = el.parentNode;
+        }
+        return el;
+    }
+
     window.onload = function() {
-        try {
-            document.getElementById('appDate').value = new Date().toISOString().split('T')[0];
-        } catch(e) {}
+        document.getElementById('appDate').valueAsDate = new Date();
         addSample(); 
     };
 
-    // 新增採樣地點 (強固版 DOM 操作)
     function addSample() {
-        var table = document.getElementById('sampleTable');
-        var tfoot = table.querySelector('tfoot');
-        var tbody = document.createElement('tbody');
+        const table = document.getElementById('sampleTable');
+        const tfoot = table.querySelector('tfoot');
+        const tbody = document.createElement('tbody');
         
-        var today = new Date().toISOString().split('T')[0];
-        var timeStr = new Date().toTimeString().split(' ')[0].substring(0,5);
+        const today = new Date().toISOString().split('T')[0];
+        
+        // 確保時間格式支援度
+        const nowObj = new Date();
+        let h = nowObj.getHours().toString();
+        let m = nowObj.getMinutes().toString();
+        if (h.length < 2) h = '0' + h;
+        if (m.length < 2) m = '0' + m;
+        const now = h + ':' + m;
 
-        var tr = document.createElement('tr');
+        const tr = document.createElement('tr');
         tr.innerHTML = `
             <td class="span-cell" rowspan="1"><input type="text" value="放流口"></td>
-            <td class="span-cell" rowspan="1"><input type="date" value="`+today+`"></td>
-            <td class="span-cell" rowspan="1"><input type="time" value="`+timeStr+`"></td>
+            <td class="span-cell" rowspan="1"><input type="date" value="${today}"></td>
+            <td class="span-cell" rowspan="1"><input type="time" value="${now}"></td>
             <td class="span-cell" rowspan="1">
                 <select>
                     <option value="透明">透明</option>
@@ -322,125 +310,128 @@
             <td class="span-cell" rowspan="1"><input type="text" value="2510"></td>
             <td class="span-cell" rowspan="1"><input type="text"></td>
             <td class="span-cell no-print" rowspan="1">
-                <button type="button" class="action-btn btn-add-item" onclick="addItem(this); return false;">+項目</button>
-                <button type="button" class="action-btn btn-del-sample" onclick="removeSample(this); return false;">刪除地點</button>
+                <button type="button" class="action-btn btn-add-item" onclick="addItem(this)">+項目</button>
+                <button type="button" class="action-btn btn-del-sample" onclick="removeSample(this)">刪除地點</button>
             </td>
         `;
         tbody.appendChild(tr);
         table.insertBefore(tbody, tfoot); 
     }
 
-    // 新增附屬分析項目 (修正相容性語法)
+    // 新增項目 (修復按了沒反應的問題)
     function addItem(btn) {
         try {
-            // 向上尋找 tbody，避開某些瀏覽器不支援 closest() 的問題
-            var currentElement = btn;
-            while (currentElement && currentElement.tagName !== 'TBODY') {
-                currentElement = currentElement.parentNode;
-            }
-            var tbody = currentElement;
+            const tbody = getParentTbody(btn);
             if (!tbody) return;
+
+            const firstTr = tbody.querySelector('tr');
+            const spanCells = firstTr.querySelectorAll('.span-cell');
             
-            var firstTr = tbody.getElementsByTagName('tr')[0];
-            var spanCells = firstTr.querySelectorAll('.span-cell');
-            
-            // 使用 getAttribute/setAttribute 修改 rowspan 最穩定
-            for (var i = 0; i < spanCells.length; i++) {
-                var cell = spanCells[i];
-                var currentSpan = parseInt(cell.getAttribute('rowspan') || '1', 10);
+            // 強制寫入 DOM 屬性，確保 Word 匯出與畫面皆能正確讀取
+            for(let i = 0; i < spanCells.length; i++) {
+                let cell = spanCells[i];
+                let currentSpan = parseInt(cell.getAttribute('rowspan') || '1', 10);
                 cell.setAttribute('rowspan', currentSpan + 1);
             }
 
-            var newTr = document.createElement('tr');
-            newTr.innerHTML = '<td><div class="flex-input-group"><input type="text" placeholder="附加分析項目"><button type="button" class="btn-del-item no-print" onclick="removeItem(this); return false;" title="刪除此項目">X</button></div></td><td><input type="text" placeholder="體積"></td><td><input type="text" placeholder="數量"></td><td><select><option value="R">R</option><option value="R-SA">R-SA</option><option value="R-NA">R-NA</option><option value="R-SH">R-SH</option><option value="R-AS">R-AS</option><option value="R-SF">R-SF</option><option value="R-CA">R-CA</option></select></td><td></td>';
+            const newTr = document.createElement('tr');
+            newTr.innerHTML = `
+                <td>
+                    <div class="flex-input-group">
+                        <input type="text" placeholder="附加分析項目">
+                        <button type="button" class="btn-del-item no-print" onclick="removeItem(this)" title="刪除此項目">X</button>
+                    </div>
+                </td>
+                <td><input type="text" placeholder="體積"></td>
+                <td><input type="text" placeholder="數量"></td>
+                <td>
+                    <select>
+                        <option value="R">R</option>
+                        <option value="R-SA">R-SA</option>
+                        <option value="R-NA">R-NA</option>
+                        <option value="R-SH">R-SH</option>
+                        <option value="R-AS">R-AS</option>
+                        <option value="R-SF">R-SF</option>
+                        <option value="R-CA">R-CA</option>
+                    </select>
+                </td>
+                <td></td>
+            `;
             tbody.appendChild(newTr);
         } catch(e) {
-            alert("新增項目時發生錯誤: " + e.message);
+            alert("新增項目時發生錯誤，請重新載入網頁。");
         }
     }
 
-    // 刪除附屬分析項目
+    // 刪除個別項目
     function removeItem(btn) {
-        try {
-            var currentElement = btn;
-            while (currentElement && currentElement.tagName !== 'TR') {
-                currentElement = currentElement.parentNode;
-            }
-            var tr = currentElement;
-            var tbody = tr.parentNode;
+        const tr = btn.parentNode.parentNode.parentNode; // button -> div -> td -> tr
+        const tbody = getParentTbody(btn);
+        
+        if (tbody) {
+            const firstTr = tbody.querySelector('tr');
+            const spanCells = firstTr.querySelectorAll('.span-cell');
             
-            var firstTr = tbody.getElementsByTagName('tr')[0];
-            var spanCells = firstTr.querySelectorAll('.span-cell');
-            
-            for (var i = 0; i < spanCells.length; i++) {
-                var cell = spanCells[i];
-                var currentSpan = parseInt(cell.getAttribute('rowspan') || '1', 10);
-                cell.setAttribute('rowspan', Math.max(1, currentSpan - 1));
+            for(let i = 0; i < spanCells.length; i++) {
+                let cell = spanCells[i];
+                let currentSpan = parseInt(cell.getAttribute('rowspan') || '1', 10);
+                if (currentSpan > 1) {
+                    cell.setAttribute('rowspan', currentSpan - 1);
+                }
             }
-
-            tbody.removeChild(tr);
-        } catch(e) {
-            alert("刪除項目時發生錯誤: " + e.message);
         }
+        tr.parentNode.removeChild(tr);
     }
 
-    // 刪除整個地點群組
     function removeSample(btn) {
-        try {
-            var currentElement = btn;
-            while (currentElement && currentElement.tagName !== 'TBODY') {
-                currentElement = currentElement.parentNode;
-            }
-            var tbody = currentElement;
-            if (tbody && tbody.parentNode) {
-                tbody.parentNode.removeChild(tbody);
-            }
-        } catch(e) {
-            alert("刪除地點時發生錯誤: " + e.message);
+        const tbody = getParentTbody(btn);
+        if (tbody) {
+            tbody.parentNode.removeChild(tbody);
         }
     }
 
-    // 預覽與 PDF 切換邏輯 (改為固定區塊切換，不使用懸浮)
     function togglePreview(isEntering) {
         if (isEntering) {
             document.body.classList.add('preview-mode');
-            window.scrollTo({top: 0, behavior: 'smooth'}); 
+            window.scrollTo(0, 0); 
         } else {
             document.body.classList.remove('preview-mode');
-            // 回到下方操作區
-            setTimeout(function(){ window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'}); }, 100);
         }
     }
 
-    // 取得時間戳
     function getTimestamp() {
-        var now = new Date();
-        var yyyy = now.getFullYear();
-        var mm = String(now.getMonth() + 1).padStart(2, '0');
-        var dd = String(now.getDate()).padStart(2, '0');
-        var hh = String(now.getHours()).padStart(2, '0');
-        var min = String(now.getMinutes()).padStart(2, '0');
+        const nowObj = new Date();
+        const yyyy = nowObj.getFullYear();
+        let mm = (nowObj.getMonth() + 1).toString();
+        let dd = nowObj.getDate().toString();
+        let hh = nowObj.getHours().toString();
+        let min = nowObj.getMinutes().toString();
+        
+        if (mm.length < 2) mm = '0' + mm;
+        if (dd.length < 2) dd = '0' + dd;
+        if (hh.length < 2) hh = '0' + hh;
+        if (min.length < 2) min = '0' + min;
+        
         return yyyy + mm + dd + '_' + hh + min;
     }
 
-    // 匯出為 Word
     function exportToWord() {
-        var clone = document.getElementById("exportContent").cloneNode(true);
-        var originalInputs = document.getElementById("exportContent").querySelectorAll('input, select');
-        var cloneInputs = clone.querySelectorAll('input, select');
+        let clone = document.getElementById("exportContent").cloneNode(true);
+        let originalInputs = document.getElementById("exportContent").querySelectorAll('input, select');
+        let cloneInputs = clone.querySelectorAll('input, select');
         
-        for (var i = 0; i < originalInputs.length; i++) {
-            var val = originalInputs[i].value;
-            var textNode = document.createTextNode(val || " "); 
+        for (let i = 0; i < originalInputs.length; i++) {
+            let val = originalInputs[i].value;
+            let textNode = document.createTextNode(val || " "); 
             cloneInputs[i].parentNode.replaceChild(textNode, cloneInputs[i]);
         }
 
-        var noPrintElements = clone.querySelectorAll('.no-print');
-        for (var j = 0; j < noPrintElements.length; j++) {
-            noPrintElements[j].parentNode.removeChild(noPrintElements[j]);
+        let noPrintElements = clone.querySelectorAll('.no-print');
+        for (let i = 0; i < noPrintElements.length; i++) {
+            noPrintElements[i].parentNode.removeChild(noPrintElements[i]);
         }
 
-        var header = `
+        let header = `
         <html xmlns:o='urn:schemas-microsoft-com:office:office' 
               xmlns:w='urn:schemas-microsoft-com:office:word' 
               xmlns='http://www.w3.org/TR/REC-html40'>
@@ -449,19 +440,23 @@
             <title>樣品檢驗申請單</title>
             <style>
                 @page WordSection1 {
-                    size: 595.3pt 841.9pt; 
-                    margin: 36.0pt 36.0pt 36.0pt 36.0pt; 
+                    size: 595.3pt 841.9pt; /* A4 直式 */
+                    margin: 36.0pt 36.0pt 36.0pt 36.0pt; /* 窄邊界 */
                     mso-header-margin: 36.0pt;
                     mso-footer-margin: 36.0pt;
                     mso-paper-source: 0;
                 }
                 div.WordSection1 { page: WordSection1; }
                 
+                /* 強制將所有行距與縮排歸零 */
                 body, p, div, td, th, span {
                     font-family: '標楷體', DFKai-SB, serif;
                     font-size: 11pt;
-                    margin: 0pt; padding: 0pt; text-indent: 0pt;
-                    line-height: 100%; mso-line-height-rule: exactly;
+                    margin: 0pt;
+                    padding: 0pt;
+                    text-indent: 0pt;
+                    line-height: 100%;
+                    mso-line-height-rule: exactly;
                 }
                 
                 h2 { text-align: center; font-size: 18pt; margin: 0; font-family: '標楷體', DFKai-SB, serif; }
@@ -478,17 +473,17 @@
         <body>
             <div class="WordSection1">
         `;
-        var footer = "</div></body></html>";
-        var sourceHTML = header + clone.innerHTML + footer;
+        let footer = "</div></body></html>";
+        let sourceHTML = header + clone.innerHTML + footer;
 
-        var blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
-        var url = URL.createObjectURL(blob);
-        var fileDownload = document.createElement("a");
+        let blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
+        let url = URL.createObjectURL(blob);
+        let fileDownload = document.createElement("a");
         document.body.appendChild(fileDownload);
         
-        var timestamp = getTimestamp();
+        let timestamp = getTimestamp();
         fileDownload.href = url;
-        fileDownload.download = "樣品檢驗申請單_環保局_" + timestamp + ".doc";
+        fileDownload.download = '樣品檢驗申請單_環保局_' + timestamp + '.doc';
         
         fileDownload.click();
         document.body.removeChild(fileDownload);
