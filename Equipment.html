@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>竹南污水處理廠 - 異常狀況紀錄表</title>
+    <style>
+        body {
+            font-family: '微軟正黑體', Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .header-info input {
+            padding: 5px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #bdc3c7;
+            padding: 10px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        th {
+            background-color: #34495e;
+            color: white;
+            white-space: nowrap;
+        }
+        select, input[type="text"] {
+            width: 95%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        .desc-input {
+            width: 98%;
+            text-align: left;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        #addRowBtn { background-color: #27ae60; }
+        #addRowBtn:hover { background-color: #2ecc71; }
+        #downloadBtn { background-color: #2980b9; }
+        #downloadBtn:hover { background-color: #3498db; }
+        #previewBtn { background-color: #8e44ad; }
+        #previewBtn:hover { background-color: #9b59b6; }
+        .delete-btn {
+            background-color: #e74c3c;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+        .delete-btn:hover { background-color: #c0392b; }
+
+        /* 列印與 PDF 輸出時的樣式設定 */
+        @media print {
+            body { background-color: #fff; padding: 0; }
+            .container { box-shadow: none; padding: 0; }
+            .no-print { display: none !important; }
+            input, select { 
+                border: none; 
+                background: transparent; 
+                appearance: none; 
+                -webkit-appearance: none; 
+                -moz-appearance: none; 
+                padding: 0; 
+                font-size: 16pt;
+                color: #000;
+                text-align: center;
+            }
+            .desc-input { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="exportContent">
+    <h2>竹南污水處理廠 設備異常狀況紀錄表</h2>
+    
+    <div class="header-info">
+        <div>日期：<input type="date" id="recordDate"></div>
+        <div>填表人員：<input type="text" id="personnel" placeholder="請輸入姓名"></div>
+    </div>
+
+    <table id="recordTable">
+        <thead>
+            <tr>
+                <th style="width: 10%;">位置</th>
+                <th style="width: 15%;">單元</th>
+                <th style="width: 15%;">設備</th>
+                <th style="width: 15%;">編號</th>
+                <th style="width: 35%;">異常描述</th>
+                <th class="no-print" style="width: 10%;">操作</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            </tbody>
+    </table>
+</div>
+
+<div class="btn-group no-print">
+    <button id="addRowBtn" onclick="addRow()">新增一列</button>
+    <button id="downloadBtn" onclick="exportToWord()">下載文件 (.doc)</button>
+    <button id="previewBtn" onclick="window.print()">預覽 (截圖/列印成PDF)</button>
+</div>
+
+<script>
+    // 水措設備單元下拉選單選項 (繁體中文)
+    const unitOptions = [
+        "進流站", "沉砂池", "調節池", "調整池", "初沉池", 
+        "接觸曝氣池", "鼓風機系統", "二沉池", "化學加藥系統", 
+        "快慢混凝池", "混沉池", "砂濾池", "中和池", 
+        "回收水系統", "放流池"
+    ];
+
+    // 頁面載入時初始化
+    window.onload = function() {
+        document.getElementById('recordDate').valueAsDate = new Date();
+        addRow(); 
+    };
+
+    // 新增一列表格
+    function addRow() {
+        const tbody = document.getElementById('tableBody');
+        const tr = document.createElement('tr');
+
+        // 位置
+        let tdLoc = document.createElement('td');
+        tdLoc.innerHTML = '<select><option value="一期">一期</option><option value="二期">二期</option></select>';
+        tr.appendChild(tdLoc);
+
+        // 單元
+        let tdUnit = document.createElement('td');
+        let unitSelectHTML = '<select>';
+        unitOptions.forEach(opt => {
+            unitSelectHTML += `<option value="${opt}">${opt}</option>`;
+        });
+        unitSelectHTML += '</select>';
+        tdUnit.innerHTML = unitSelectHTML;
+        tr.appendChild(tdUnit);
+
+        // 設備
+        let tdEquip = document.createElement('td');
+        tdEquip.innerHTML = '<input type="text" placeholder="如: 進流泵/液位計">';
+        tr.appendChild(tdEquip);
+
+        // 編號
+        let tdNum = document.createElement('td');
+        tdNum.innerHTML = '<input type="text" placeholder="如: T01-1+2">';
+        tr.appendChild(tdNum);
+
+        // 異常描述
+        let tdDesc = document.createElement('td');
+        tdDesc.innerHTML = '<input type="text" class="desc-input" placeholder="請簡述異常情形...">';
+        tr.appendChild(tdDesc);
+
+        // 操作
+        let tdAction = document.createElement('td');
+        tdAction.className = 'no-print';
+        tdAction.innerHTML = '<button class="delete-btn" onclick="removeRow(this)">刪除</button>';
+        tr.appendChild(tdAction);
+
+        tbody.appendChild(tr);
+    }
+
+    // 刪除該列
+    function removeRow(btn) {
+        const row = btn.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+    }
+
+    // 匯出成 Word 檔 (.doc)
+    function exportToWord() {
+        let clone = document.getElementById("exportContent").cloneNode(true);
+        
+        let originalInputs = document.getElementById("exportContent").querySelectorAll('input, select');
+        let cloneInputs = clone.querySelectorAll('input, select');
+        
+        for (let i = 0; i < originalInputs.length; i++) {
+            let val = originalInputs[i].value;
+            let textNode = document.createTextNode(val || " "); 
+            cloneInputs[i].parentNode.replaceChild(textNode, cloneInputs[i]);
+        }
+
+        let noPrintElements = clone.querySelectorAll('.no-print');
+        noPrintElements.forEach(el => el.remove());
+
+        // 設定 Word 專用格式：標楷體 11pt, 橫式 (Landscape), 窄邊界 (36pt = 0.5英吋)
+        let header = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+              xmlns:w='urn:schemas-microsoft-com:office:word' 
+              xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+            <meta charset='utf-8'>
+            <title>單元設備異常紀錄表</title>
+            <style>
+                @page WordSection1 {
+                    size: 841.9pt 595.3pt; /* A4 橫式尺寸 */
+                    mso-page-orientation: landscape; /* 設定為橫向 */
+                    margin: 36.0pt 36.0pt 36.0pt 36.0pt; /* 窄邊界約 1.27cm */
+                    mso-header-margin: 36.0pt;
+                    mso-footer-margin: 36.0pt;
+                    mso-paper-source: 0;
+                }
+                div.WordSection1 { page: WordSection1; }
+                
+                /* 強制使用標楷體與 11pt */
+                body, table, th, td, div, p, span {
+                    font-family: '標楷體', DFKai-SB, serif;
+                    font-size: 11pt;
+                }
+                
+                h2 {
+                    text-align: center;
+                    font-size: 16pt; /* 標題稍微放大 */
+                    font-family: '標楷體', DFKai-SB, serif;
+                }
+                
+                table {
+                    width: 100%; 
+                    border-collapse: collapse;
+                }
+                th, td {
+                    border: 1px solid black; 
+                    padding: 8px; 
+                    text-align: center;
+                    vertical-align: middle;
+                }
+                th {
+                    background-color: #f2f2f2;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="WordSection1">
+        `;
+        let footer = "</div></body></html>";
+        let sourceHTML = header + clone.innerHTML + footer;
+
+        // 使用 Blob 與加上 UTF-8 BOM，確保繁體中文不會變成亂碼
+        let blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
+        let url = URL.createObjectURL(blob);
+        let fileDownload = document.createElement("a");
+        document.body.appendChild(fileDownload);
+        fileDownload.href = url;
+        fileDownload.download = '異常狀況紀錄表.doc';
+        fileDownload.click();
+        document.body.removeChild(fileDownload);
+        URL.revokeObjectURL(url);
+    }
+</script>
+
+</body>
+</html>
