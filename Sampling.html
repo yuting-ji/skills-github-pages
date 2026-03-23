@@ -3,174 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>樣品檢驗申請單 - 填寫系統</title>
+    <title>樣品檢驗申請單 - 竹南污水處理廠</title>
     <style>
-        body { font-family: '微軟正黑體', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 98%; margin: 0 auto; background: #fff; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-radius: 8px; }
+        body { font-family: '微軟正黑體', sans-serif; background-color: #e9ecef; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 100%; overflow-x: auto; background: #fff; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 5px; }
         
-        /* 控制面板 */
-        .control-panel { display: flex; gap: 10px; margin-bottom: 20px; }
-        .control-panel button { padding: 10px 20px; font-size: 15px; font-weight: bold; cursor: pointer; border: none; border-radius: 4px; color: white; transition: 0.2s; }
-        .btn-primary { background: #2c3e50; } .btn-primary:hover { background: #1a252f; }
-        .btn-success { background: #27ae60; } .btn-success:hover { background: #219150; }
-        .btn-info { background: #2980b9; } .btn-info:hover { background: #1f6391; }
-
-        /* 表格排版優化 (解決擠壓問題) */
-        .table-responsive { width: 100%; overflow-x: auto; margin-bottom: 20px; border: 1px solid #ddd; }
-        table { width: 100%; min-width: 1400px; border-collapse: collapse; font-size: 14px; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; vertical-align: top; }
-        .th-bg { background-color: #ecf0f1; font-weight: bold; text-align: left; }
-        .text-left { text-align: left !important; }
-        .text-center { text-align: center !important; }
+        /* 控制按鈕區 */
+        .header-controls { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; font-size: 15px; cursor: pointer; border: none; border-radius: 4px; color: white; font-weight: bold; transition: 0.2s; }
+        .btn-add { background: #28a745; } .btn-add:hover { background: #218838; }
+        .btn-export { background: #007bff; } .btn-export:hover { background: #0069d9; }
         
-        /* 輸入框美化 */
-        input[type="text"], input[type="date"], input[type="time"], select { 
-            width: 100%; padding: 6px; border: 1px solid #bdc3c7; border-radius: 3px; font-family: inherit; font-size: 13px; box-sizing: border-box; background-color: #fafafa;
-        }
-        input:focus, select:focus { border-color: #3498db; outline: none; background-color: #fff; }
+        /* 基本資料區 */
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px; background: #f8f9fa; padding: 15px; border-radius: 5px; border: 1px solid #dee2e6; }
+        .info-group { display: flex; flex-direction: column; }
+        .info-group label { font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+        .info-group input { padding: 6px; border: 1px solid #ced4da; border-radius: 4px; font-family: inherit; }
 
-        /* 動態新增項目區塊優化 */
-        .sub-item-group { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
-        .del-sub-btn { background: #e74c3c; color: white; border: none; border-radius: 3px; cursor: pointer; padding: 4px 8px; font-size: 12px; font-weight: bold; }
-        .del-sub-btn:hover { background: #c0392b; }
-        .add-item-btn { background: #f39c12; color: #fff; border: none; padding: 4px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; font-weight: bold; width: 100%; margin-bottom: 5px;}
-        .del-row-btn { background: #c0392b; color: #fff; border: none; padding: 4px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; font-weight: bold; width: 100%;}
-
-        /* 欄位最小寬度鎖定 */
-        .col-loc { min-width: 120px; }
-        .col-date { min-width: 120px; }
-        .col-time { min-width: 90px; }
-        .col-app { min-width: 90px; }
-        .col-item { min-width: 180px; }
-        .col-vol { min-width: 80px; }
-        .col-qty { min-width: 60px; }
-        .col-save { min-width: 90px; }
-        .col-measure { min-width: 70px; }
-
-        @media print {
-            body { background: #fff; padding: 0; }
-            .container { box-shadow: none; padding: 0; max-width: 100%; border: none; }
-            .no-print, .control-panel { display: none !important; }
-            .table-responsive { overflow-x: visible; border: none; }
-            input, select { border: none; background: transparent; appearance: none; text-align: center; font-size: 12pt; padding: 0; color: #000; }
-            .text-left input { text-align: left; }
-            table { min-width: 100%; }
-        }
+        /* 表格區 (防擠壓設計) */
+        .table-wrapper { width: 100%; overflow-x: auto; border: 1px solid #dee2e6; margin-bottom: 20px; }
+        table { width: 100%; min-width: 1300px; border-collapse: collapse; font-size: 14px; }
+        th, td { border: 1px solid #ced4da; padding: 8px; text-align: center; vertical-align: top; }
+        th { background-color: #e9ecef; font-weight: bold; white-space: nowrap; }
+        
+        /* 輸入元件與動態列 */
+        input[type="text"], input[type="date"], input[type="time"], select { width: 100%; padding: 5px; border: 1px solid #ced4da; box-sizing: border-box; font-family: inherit; }
+        .item-row-group { display: flex; align-items: center; gap: 5px; margin-bottom: 4px; }
+        
+        /* 內部小按鈕 */
+        .btn-sm { padding: 3px 8px; font-size: 12px; border: none; border-radius: 3px; cursor: pointer; color: white; font-weight: bold; }
+        .btn-danger { background: #dc3545; } .btn-warning { background: #ffc107; color: #000; width: 100%; margin-bottom: 5px; }
+        
+        /* 鎖定關鍵欄寬 */
+        .w-loc { width: 130px; } .w-date { width: 130px; } .w-time { width: 100px; } .w-app { width: 100px; }
+        .w-item { width: 160px; } .w-vol { width: 80px; } .w-qty { width: 60px; } .w-save { width: 90px; }
+        .w-measure { width: 70px; } .w-action { width: 80px; }
     </style>
 </head>
 <body>
 
-<div class="container" id="exportContent">
-    <div class="control-panel no-print">
-        <button class="btn-success" onclick="addSample()">+ 新增採樣地點</button>
-        <button class="btn-info" onclick="exportToWord()">下載 Word 檔 (.doc)</button>
-        <button class="btn-primary" onclick="window.print()">列印預覽 / 截圖</button>
+<div class="container">
+    <div class="header-controls">
+        <button class="btn btn-add" onclick="addSamplePoint()">+ 新增採樣地點</button>
+        <button class="btn btn-export" onclick="exportToWord()">下載 Word 申請單</button>
     </div>
 
-    <div class="table-responsive">
-        <table style="min-width: 100%; margin-bottom: 10px; border:none;">
-            <tr>
-                <td style="border:none; text-align:left; font-weight:bold;">申請單位基本資料</td>
-            </tr>
-        </table>
-        <table style="margin-bottom: 20px;">
-            <tr>
-                <td width="15%" class="th-bg">申請單位</td><td width="35%">中欣行(股)公司-竹南流程單位</td>
-                <td width="15%" class="th-bg">聯絡人</td><td width="35%">侯克穎</td>
-            </tr>
-            <tr>
-                <td class="th-bg">電話</td><td>037-585015</td>
-                <td class="th-bg">傳真電話</td><td>037-585395</td>
-            </tr>
-            <tr>
-                <td class="th-bg">採樣地址</td><td colspan="3" class="text-left">苗栗縣竹南鎮科學路旁</td>
-            </tr>
-            <tr>
-                <td class="th-bg">受檢單位</td><td>竹南科學園區污水處理廠</td>
-                <td class="th-bg">採樣(單位)人員</td><td><input type="text" id="inpSampler" value="環保局" placeholder="請填寫採樣人員"></td>
-            </tr>
-            <tr>
-                <td class="th-bg">樣品種類</td><td>事業廢水</td>
-                <td class="th-bg">送樣人員</td><td><input type="text" id="inpDeliverer" placeholder="請填寫送樣人員"></td>
-            </tr>
-        </table>
+    <div class="info-grid">
+        <div class="info-group"><label>申請日期</label><input type="date" id="docDate"></div>
+        <div class="info-group"><label>採樣人員</label><input type="text" id="docSampler" value="環保局"></div>
+        <div class="info-group"><label>送樣人員</label><input type="text" id="docDeliverer" placeholder="請輸入送樣人員"></div>
+        <div class="info-group"><label>要求事項</label><input type="text" id="docReqs" placeholder="若無可留白"></div>
     </div>
 
-    <div class="table-responsive">
-        <table style="min-width: 100%; margin-bottom: 5px; border:none;">
-            <tr>
-                <td style="border:none; text-align:left; font-weight:bold;">檢驗需求內容及說明</td>
-            </tr>
-        </table>
-        <table id="sampleTable">
+    <div class="table-wrapper">
+        <table id="mainTable">
             <thead>
-                <tr class="th-bg text-center">
-                    <td rowspan="2" class="col-loc">採樣地點<br>(名稱)</td>
-                    <td rowspan="2" class="col-date">採樣日期</td>
-                    <td rowspan="2" class="col-time">採樣時間</td>
-                    <td rowspan="2" class="col-app">樣品外觀</td>
-                    <td rowspan="2" class="col-item">委託分析項目</td>
-                    <td rowspan="2" class="col-vol">體積(mL)</td>
-                    <td rowspan="2" class="col-qty">數量</td>
-                    <td rowspan="2" class="col-save">保存方式<br>代號</td>
-                    <td rowspan="2" width="60px">樣品編號<br><span style="font-size:10px">(檢驗室填)</span></td>
-                    <td colspan="4">現場量測紀錄</td>
-                    <td rowspan="2" width="80px" class="no-print">操作</td>
+                <tr>
+                    <th rowspan="2" class="w-loc">採樣地點(名稱)</th>
+                    <th rowspan="2" class="w-date">採樣日期</th>
+                    <th rowspan="2" class="w-time">採樣時間</th>
+                    <th rowspan="2" class="w-app">樣品外觀</th>
+                    <th rowspan="2" class="w-item">委託分析項目</th>
+                    <th rowspan="2" class="w-vol">體積(mL)</th>
+                    <th rowspan="2" class="w-qty">數量</th>
+                    <th rowspan="2" class="w-save">保存方式代號</th>
+                    <th rowspan="2" width="60">樣品編號</th>
+                    <th colspan="4">現場量測紀錄</th>
+                    <th rowspan="2" class="w-action">操作</th>
                 </tr>
-                <tr class="th-bg text-center">
-                    <td class="col-measure">pH</td><td class="col-measure">水溫℃</td><td class="col-measure">導電度</td><td class="col-measure">其他</td>
+                <tr>
+                    <th class="w-measure">pH</th>
+                    <th class="w-measure">水溫℃</th>
+                    <th class="w-measure">導電度</th>
+                    <th class="w-measure">其他</th>
                 </tr>
             </thead>
             <tbody id="sampleBody">
                 </tbody>
-            <tfoot>
-                <tr>
-                    <td class="th-bg">要求事項</td>
-                    <td colspan="13" class="text-left"><input type="text" id="inpReqs" placeholder="請填寫要求事項 (若無可空白)"></td>
-                </tr>
-            </tfoot>
         </table>
     </div>
 </div>
 
 <script>
     window.onload = function() {
-        addSample(); 
+        document.getElementById('docDate').valueAsDate = new Date();
+        addSamplePoint();
     };
 
-    function addSample() {
+    function addSamplePoint() {
         const tbody = document.getElementById('sampleBody');
         const tr = document.createElement('tr');
-        tr.className = 'sample-row';
+        tr.className = 'sample-tr';
         
         const today = new Date().toISOString().split('T')[0];
         const now = new Date().toTimeString().split(' ')[0].substring(0,5);
 
         tr.innerHTML = `
-            <td><input type="text" class="inp-loc" placeholder="放流口 D01"></td>
-            <td><input type="date" class="inp-date" value="${today}"></td>
-            <td><input type="time" class="inp-time" value="${now}"></td>
+            <td><input type="text" class="i-loc" placeholder="如:放流口 D01"></td>
+            <td><input type="date" class="i-date" value="${today}"></td>
+            <td><input type="time" class="i-time" value="${now}"></td>
             <td>
-                <select class="inp-app">
+                <select class="i-app">
                     <option value="透明">透明</option><option value="微濁">微濁</option><option value="混濁">混濁</option><option value="其他">其他</option>
                 </select>
             </td>
-            <td class="items-cell text-left"><div class="sub-item-group"><input type="text" class="inp-item" placeholder="如: SS"><button class="del-sub-btn no-print" onclick="this.parentElement.remove()" title="刪除此項">×</button></div></td>
-            <td class="vols-cell text-left"><div class="sub-item-group"><input type="text" class="inp-vol" placeholder="2000"></div></td>
-            <td class="qtys-cell text-left"><div class="sub-item-group"><input type="text" class="inp-qty" placeholder="5"></div></td>
-            <td class="saves-cell text-left">
-                <div class="sub-item-group">
-                    <select class="inp-save"><option value="R">R</option><option value="R-SA">R-SA</option><option value="R-NA">R-NA</option><option value="R-SH">R-SH</option><option value="R-AS">R-AS</option></select>
+            <td class="td-items"><div class="item-row-group"><input type="text" class="i-item" placeholder="項目(如SS)"><button class="btn-sm btn-danger" onclick="this.parentElement.remove()">×</button></div></td>
+            <td class="td-vols"><div class="item-row-group"><input type="text" class="i-vol" placeholder="體積"></div></td>
+            <td class="td-qtys"><div class="item-row-group"><input type="text" class="i-qty" placeholder="數量"></div></td>
+            <td class="td-saves">
+                <div class="item-row-group">
+                    <select class="i-save"><option value="R">R</option><option value="R-SA">R-SA</option><option value="R-NA">R-NA</option><option value="R-SH">R-SH</option><option value="R-AS">R-AS</option></select>
                 </div>
             </td>
             <td></td>
-            <td><input type="text" class="inp-ph"></td>
-            <td><input type="text" class="inp-temp"></td>
-            <td><input type="text" class="inp-cond"></td>
-            <td><input type="text" class="inp-other"></td>
-            <td class="no-print">
-                <button class="add-item-btn" onclick="addSubItem(this)">+ 項目</button>
-                <button class="del-row-btn" onclick="this.closest('tr').remove()">刪地點</button>
+            <td><input type="text" class="i-ph"></td>
+            <td><input type="text" class="i-temp"></td>
+            <td><input type="text" class="i-cond"></td>
+            <td><input type="text" class="i-other"></td>
+            <td>
+                <button class="btn-sm btn-warning" onclick="addSubItem(this)">+分析項目</button>
+                <button class="btn-sm btn-danger" style="width:100%" onclick="this.closest('tr').remove()">刪除地點</button>
             </td>
         `;
         tbody.appendChild(tr);
@@ -178,19 +130,21 @@
 
     function addSubItem(btn) {
         const tr = btn.closest('tr');
-        tr.querySelector('.items-cell').insertAdjacentHTML('beforeend', `<div class="sub-item-group"><input type="text" class="inp-item" placeholder="附加項目"><button class="del-sub-btn no-print" onclick="removeSubItem(this)" title="刪除此項">×</button></div>`);
-        tr.querySelector('.vols-cell').insertAdjacentHTML('beforeend', `<div class="sub-item-group"><input type="text" class="inp-vol" placeholder="體積"></div>`);
-        tr.querySelector('.qtys-cell').insertAdjacentHTML('beforeend', `<div class="sub-item-group"><input type="text" class="inp-qty" placeholder="數量"></div>`);
-        tr.querySelector('.saves-cell').insertAdjacentHTML('beforeend', `<div class="sub-item-group"><select class="inp-save"><option value="R">R</option><option value="R-SA">R-SA</option><option value="R-NA">R-NA</option><option value="R-SH">R-SH</option><option value="R-AS">R-AS</option></select></div>`);
+        tr.querySelector('.td-items').insertAdjacentHTML('beforeend', `<div class="item-row-group"><input type="text" class="i-item" placeholder="附加項目"><button class="btn-sm btn-danger" onclick="removeSubItem(this)">×</button></div>`);
+        tr.querySelector('.td-vols').insertAdjacentHTML('beforeend', `<div class="item-row-group"><input type="text" class="i-vol" placeholder="體積"></div>`);
+        tr.querySelector('.td-qtys').insertAdjacentHTML('beforeend', `<div class="item-row-group"><input type="text" class="i-qty" placeholder="數量"></div>`);
+        tr.querySelector('.td-saves').insertAdjacentHTML('beforeend', `<div class="item-row-group"><select class="i-save"><option value="R">R</option><option value="R-SA">R-SA</option><option value="R-NA">R-NA</option><option value="R-SH">R-SH</option><option value="R-AS">R-AS</option></select></div>`);
     }
 
     function removeSubItem(btn) {
-        const index = Array.from(btn.closest('td').children).indexOf(btn.closest('.sub-item-group'));
-        const tr = btn.closest('tr');
-        tr.querySelector('.items-cell').children[index].remove();
-        tr.querySelector('.vols-cell').children[index].remove();
-        tr.querySelector('.qtys-cell').children[index].remove();
-        tr.querySelector('.saves-cell').children[index].remove();
+        const group = btn.closest('.item-row-group');
+        const td = group.parentElement;
+        const index = Array.from(td.children).indexOf(group);
+        const tr = td.closest('tr');
+        tr.querySelector('.td-items').children[index].remove();
+        tr.querySelector('.td-vols').children[index].remove();
+        tr.querySelector('.td-qtys').children[index].remove();
+        tr.querySelector('.td-saves').children[index].remove();
     }
 
     function formatROC(dateStr) {
@@ -199,48 +153,61 @@
         return (d.getFullYear() - 1911) + "." + String(d.getMonth() + 1).padStart(2, '0') + "." + String(d.getDate()).padStart(2, '0');
     }
 
-    // ====== Word 匯出：套用截圖中的精確邊界與橫向設定 ======
+    // =========================================================
+    // 嚴格依照 115.03.10.doc 格式匯出 Word (版面直式、精準邊界)
+    // =========================================================
     function exportToWord() {
-        let sampler = document.getElementById('inpSampler').value || "";
-        let deliverer = document.getElementById('inpDeliverer').value || "";
-        let reqs = document.getElementById('inpReqs').value || "";
-        let todayROC = formatROC(new Date().toISOString().split('T')[0]);
+        let docDate = formatROC(document.getElementById('docDate').value);
+        let sampler = document.getElementById('docSampler').value || "";
+        let deliverer = document.getElementById('docDeliverer').value || "";
+        let reqs = document.getElementById('docReqs').value || "";
 
-        let sampleRowsHTML = "";
+        let rowsHtml = "";
         
-        document.querySelectorAll('.sample-row').forEach(row => {
-            let loc = (row.querySelector('.inp-loc').value || "").replace(" ", "<br>"); 
-            let dateVal = formatROC(row.querySelector('.inp-date').value);
-            let time = row.querySelector('.inp-time').value || "";
-            let app = row.querySelector('.inp-app').value;
-            let ph = row.querySelector('.inp-ph').value || "";
-            let temp = row.querySelector('.inp-temp').value || "";
-            let cond = row.querySelector('.inp-cond').value || "";
-            let other = row.querySelector('.inp-other').value || "";
+        document.querySelectorAll('.sample-tr').forEach(row => {
+            let loc = (row.querySelector('.i-loc').value || "").replace(" ", "<br style='mso-data-placement:same-cell;'>");
+            let dateVal = formatROC(row.querySelector('.i-date').value);
+            let time = row.querySelector('.i-time').value || "";
+            let app = row.querySelector('.i-app').value;
+            let ph = row.querySelector('.i-ph').value || "";
+            let temp = row.querySelector('.i-temp').value || "";
+            let cond = row.querySelector('.i-cond').value || "";
+            let other = row.querySelector('.i-other').value || "";
 
+            // 外觀格式還原：(透明 \r □微濁 ...
             let appArr = ['透明', '微濁', '混濁', '其他'];
-            let appStr = appArr.map(a => `<p style="margin:0;">${a === app ? '(' : '□'}${a}</p>`).join('');
+            let appStr = appArr.map(a => `${a === app ? '(' : '□'}${a}`).join("<br style='mso-data-placement:same-cell;'>");
 
-            let itemStr = "", volStr = "", qtyStr = "", saveStr = "";
-            let items = row.querySelectorAll('.inp-item');
-            let vols = row.querySelectorAll('.inp-vol');
-            let qtys = row.querySelectorAll('.inp-qty');
-            let saves = row.querySelectorAll('.inp-save');
+            let items = row.querySelectorAll('.i-item');
+            let vols = row.querySelectorAll('.i-vol');
+            let qtys = row.querySelectorAll('.i-qty');
+            let saves = row.querySelectorAll('.i-save');
             
+            let itemStr = "", volStr = "", qtyStr = "", saveStr = "";
             for(let i=0; i<items.length; i++) {
                 let itm = items[i].value.trim();
-                if(itm) itemStr += `<p style="margin:0;">(${itm}</p>`;
-                volStr += `<p style="margin:0;">${vols[i] ? vols[i].value : ""}</p>`;
-                qtyStr += `<p style="margin:0;">${qtys[i] ? qtys[i].value : ""}</p>`;
-                saveStr += `<p style="margin:0;">${saves[i] ? saves[i].value : ""}</p>`;
+                let v = vols[i].value.trim();
+                let q = qtys[i].value.trim();
+                let s = saves[i].value.trim();
+
+                if(i > 0) {
+                    itemStr += "<br style='mso-data-placement:same-cell;'>";
+                    volStr += "<br style='mso-data-placement:same-cell;'>";
+                    qtyStr += "<br style='mso-data-placement:same-cell;'>";
+                    saveStr += "<br style='mso-data-placement:same-cell;'>";
+                }
+                itemStr += itm ? `(${itm}` : "";
+                volStr += v;
+                qtyStr += q;
+                saveStr += s;
             }
 
-            sampleRowsHTML += `
+            rowsHtml += `
                 <tr>
                     <td>${loc}</td>
                     <td>${dateVal}</td>
                     <td>${time}</td>
-                    <td style="text-align:left;">${appStr}</td>
+                    <td style="text-align:left;">${appStr}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
                     <td style="text-align:left;">${itemStr}</td>
                     <td>${volStr}</td>
                     <td>${qtyStr}</td>
@@ -254,16 +221,14 @@
             `;
         });
 
-        sampleRowsHTML += `<tr><td>以下空白</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
-        for(let i=0; i<7; i++) {
-            sampleRowsHTML += `<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
+        // 補上 "以下空白" 與空列
+        rowsHtml += `<tr><td>以下空白</td><td></td><td></td><td></td><td style="text-align:left;">以下空白</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
+        for(let i=0; i<5; i++) {
+            rowsHtml += `<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
         }
 
-        /* 邊界轉換計算 (1cm = 28.35pt)
-           上: 2cm = 56.7pt
-           下/左/右: 1.5cm = 42.5pt
-           方向: 橫向 (mso-page-orientation: landscape; size: 841.9pt 595.3pt)
-        */
+        // 版面設定：A4 直式 (595.3pt 841.9pt)
+        // 邊界：上 2cm (56.7pt)，下/左/右 1.5cm (42.5pt)
         let wordSource = `
         <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
         <head>
@@ -271,49 +236,59 @@
             <title>樣品檢驗申請單</title>
             <style>
                 @page WordSection1 {
-                    size: 841.9pt 595.3pt; /* A4 橫向 */
-                    mso-page-orientation: landscape;
-                    margin: 56.7pt 42.5pt 42.5pt 42.5pt; /* 上2cm, 下左右1.5cm */
+                    size: 595.3pt 841.9pt; 
+                    margin: 56.7pt 42.5pt 42.5pt 42.5pt; 
+                    mso-header-margin: 35.4pt;
+                    mso-footer-margin: 35.4pt;
+                    mso-paper-source: 0;
                 }
                 div.WordSection1 { page: WordSection1; }
-                table { width: 100%; border-collapse: collapse; margin-bottom: 10pt; font-family: '標楷體', DFKai-SB, serif; font-size: 11pt; }
-                td { border: 1pt solid windowtext; padding: 2pt; text-align: center; vertical-align: middle; }
-                p, span, div { font-family: '標楷體', DFKai-SB, serif; font-size: 11pt; }
+                table { width: 100%; border-collapse: collapse; margin-bottom: 10pt; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+                td { border: 1pt solid windowtext; padding: 2pt 4pt; font-family: '標楷體', DFKai-SB, serif; font-size: 11pt; text-align: center; vertical-align: middle; }
+                p, span { font-family: '標楷體', DFKai-SB, serif; font-size: 11pt; margin: 0; }
             </style>
         </head>
         <body>
             <div class="WordSection1">
-                <p align="center" style="margin:0; font-size:14pt;">中欣行(股)公司  竹南檢驗室</p>
-                <p align="center" style="margin:0; font-size:14pt;">樣品檢驗申請單</p>
+                <p align="center" style="font-size:14pt; margin-bottom:0;">中欣行(股)公司  竹南檢驗室</p>
+                <p align="center" style="font-size:14pt; margin-bottom:10pt;">樣品檢驗申請單</p>
                 
-                <p style="text-align:left; margin:5pt 0;">申請日期： ${todayROC} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 申請單編號：</p>
+                <table style="border:none; margin-bottom:5pt;">
+                    <tr>
+                        <td style="border:none; text-align:left; padding:0;">申請日期： ${docDate}</td>
+                        <td style="border:none; text-align:right; padding:0;">申請單編號：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    </tr>
+                </table>
 
                 <table>
-                    <tr><td colspan="4" style="text-align:left; border:1pt solid windowtext;">申請單位基本資料</td></tr>
-                    <tr><td width=\"15%\">申請單位</td><td width=\"35%\">中欣行(股)公司-竹南流程單位</td><td width=\"15%\">聯絡人</td><td width=\"35%\">侯克穎</td></tr>
-                    <tr><td>電話</td><td>037-585015</td><td>傳真電話</td><td>037-585395</td></tr>
-                    <tr><td>採樣地址</td><td colspan=\"3\" style=\"text-align:left;\">苗栗縣竹南鎮科學路旁</td></tr>
+                    <tr><td colspan="4" style="text-align:left;">申請單位基本資料</td></tr>
+                    <tr><td width="15%">申請單位</td><td width="35%">中欣行(股)公司-竹南流程單位</td><td width="15%">聯    絡   人</td><td width="35%">侯克穎</td></tr>
+                    <tr><td>電    話</td><td>037-585015</td><td>傳真電話</td><td>037-585395</td></tr>
+                    <tr><td>採樣地址</td><td colspan="3" style="text-align:left;">苗栗縣竹南鎮科學路旁</td></tr>
                     <tr><td>受檢單位</td><td>竹南科學園區污水處理廠</td><td>採樣(單位)人員</td><td>${sampler}</td></tr>
                     <tr><td>樣品種類</td><td>事業廢水</td><td>送樣人員</td><td>${deliverer}</td></tr>
                 </table>
 
                 <table>
-                    <tr><td colspan=\"13\" style=\"text-align:left;\">檢驗需求內容及說明</td></tr>
+                    <tr><td colspan="13" style="text-align:left;">檢驗需求內容及說明</td></tr>
                     <tr>
-                        <td rowspan=\"2\" width=\"9%\">採樣地點<br>(名稱)</td><td rowspan=\"2\" width=\"8%\">採樣<br>日期</td><td rowspan=\"2\" width=\"7%\">採樣<br>時間</td>
-                        <td rowspan=\"2\" width=\"9%\">樣品<br>外觀</td><td rowspan=\"2\" width=\"15%\">委託分析<br>項目</td><td rowspan=\"2\" width=\"8%\">體積<br>(mL)</td>
-                        <td rowspan=\"2\" width=\"5%\">數量</td><td rowspan=\"2\" width=\"9%\">保存方式<br>代號</td><td rowspan=\"2\" width=\"8%\">樣品編號<br><span style=\"font-size:9pt;\">(檢驗室填)</span></td>
-                        <td colspan=\"4\">現場量測紀錄</td>
+                        <td rowspan="2" width="10%">採樣地點<br>(名稱)</td><td rowspan="2" width="8%">採樣<br>日期</td><td rowspan="2" width="7%">採樣<br>時間</td>
+                        <td rowspan="2" width="9%">樣品<br>外觀</td><td rowspan="2" width="16%">委託分析<br>項目</td><td rowspan="2" width="7%">體積<br>(mL)</td>
+                        <td rowspan="2" width="5%">數量</td><td rowspan="2" width="9%">保存方式<br>代號</td><td rowspan="2" width="9%">樣品編號<br><span style="font-size:9pt;">(檢驗室填)</span></td>
+                        <td colspan="4">現場量測紀錄</td>
                     </tr>
-                    <tr><td width=\"5%\">pH</td><td width=\"5%\">水溫℃</td><td width=\"5%\">導電度<br>µmho/cm</td><td width=\"5%\">其他</td></tr>
-                    ${sampleRowsHTML}
-                    <tr><td style=\"text-align:center;\">要求事項</td><td colspan=\"12\" style=\"text-align:left;\">${reqs}</td></tr>
+                    <tr><td width="5%">pH</td><td width="5%">水溫℃</td><td width="5%">導電度<br>µmho/cm</td><td width="5%">其他</td></tr>
+                    ${rowsHtml}
                 </table>
 
-                <p style=\"margin:0; line-height:1.2;\">樣品保存方式代號說明：</p>
-                <p style=\"margin:0; line-height:1.2;\">&nbsp;&nbsp;R：4±2℃冷藏。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; R-SH：加氫氧化鈉pH&gt;12,暗處,4±2℃冷藏。</p>
-                <p style=\"margin:0; line-height:1.2;\">&nbsp;&nbsp;R-SA：加硫酸pH&lt;2,4±2℃冷藏。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R-AS：加醋酸鋅與氫氧化鈉使pH&gt;9,4±2℃冷藏。</p>
-                <p style=\"margin:0; line-height:1.2;\">&nbsp;&nbsp;R-NA：加低汞硝酸pH&lt;2,4±2℃冷藏。</p>
+                <table style="border:none; margin-top:-10pt;">
+                    <tr><td width="10%" style="border:none; border-right:1pt solid windowtext; border-left:1pt solid windowtext; border-bottom:1pt solid windowtext; text-align:center;">要求事項</td><td style="border:none; border-right:1pt solid windowtext; border-bottom:1pt solid windowtext; text-align:left;">${reqs}</td></tr>
+                </table>
+
+                <p style="margin-top:10pt; line-height:1.2;">樣品保存方式代號說明：</p>
+                <p style="line-height:1.2;">&nbsp;&nbsp;R：4±2℃冷藏。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R-SH：加氫氧化鈉pH&gt;12,暗處,4±2℃冷藏。</p>
+                <p style="line-height:1.2;">&nbsp;&nbsp;R-SA：加硫酸pH&lt;2,4±2℃冷藏。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R-AS：加醋酸鋅與氫氧化鈉使pH&gt;9,4±2℃冷藏。</p>
+                <p style="line-height:1.2;">&nbsp;&nbsp;R-NA：加低汞硝酸pH&lt;2,4±2℃冷藏。</p>
             </div>
         </body>
         </html>
@@ -321,16 +296,15 @@
 
         let blob = new Blob(['\ufeff', wordSource], { type: 'application/msword' });
         let url = URL.createObjectURL(blob);
-        let fileDownload = document.createElement("a");
-        document.body.appendChild(fileDownload);
+        let a = document.createElement("a");
+        a.href = url;
         
-        let now = new Date();
-        let ts = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
-        fileDownload.href = url;
-        fileDownload.download = `樣品檢驗申請單_${ts}.doc`;
-        fileDownload.click();
-        
-        document.body.removeChild(fileDownload);
+        let d = new Date();
+        let ts = `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}_${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}`;
+        a.download = `樣品檢驗申請單_${ts}.doc`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
         URL.revokeObjectURL(url);
     }
 </script>
