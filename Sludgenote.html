@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>竹南污水處理廠 - 底泥量測紀錄</title>
+    <title>底泥量測紀錄</title>
     <style>
         :root {
             --primary: #0ea5e9; --primary-dark: #0284c7; --surface: #ffffff;
@@ -44,7 +44,7 @@
         <h2>💧 各沉澱池底泥量測紀錄</h2>
         <div class="card">
             <div class="info-group"><label>📅 量測日期</label><input type="date" id="recordDate" required></div>
-            <div class="info-group"><label>👤 量測人員</label><input type="text" id="operator" placeholder="請輸入姓名 (可空白手簽)"></div>
+            <div class="info-group"><label>👤 量測人員</label><input type="text" id="operator" placeholder="請輸入姓名"></div>
         </div>
         <div class="card"><div class="phase-title">一期各沉澱池底泥量測深度(公分)</div><div id="phase1-container"></div></div>
         <div class="card"><div class="phase-title">二期各沉澱池底泥量測深度(公分)</div><div id="phase2-container"></div></div>
@@ -125,7 +125,7 @@
             const date = document.getElementById('recordDate').value;
             const operator = document.getElementById('operator').value || ''; // 允許空白
 
-            const headerInfo = `<div style="font-family: '標楷體', 'BiauKai', serif; font-size: 14pt; font-weight: bold; text-align: center; margin-bottom: 10px;">竹南污水處理廠 - 底泥量測紀錄</div>
+            const headerInfo = `<div style="font-family: '標楷體', 'BiauKai', serif; font-size: 14pt; font-weight: bold; text-align: center; margin-bottom: 10px;">底泥量測記錄</div>
                                 <div style="font-family: '標楷體', 'BiauKai', serif; font-size: 12pt; margin-bottom: 15px;">日期：${date} &nbsp;&nbsp; 量測人員：${operator}</div>`;
             const noteInfo = `<div style="font-family: '標楷體', 'BiauKai', serif; color: red; font-weight: bold; text-align: center; font-size: 12pt; margin-top: 15px;">備註: 40cm採水器全滿,泥量實際大於40cm</div>`;
             
@@ -156,7 +156,7 @@
                 <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
                 <head>
                     <meta charset='utf-8'>
-                    <title>底泥量測紀錄</title>
+                    <title>底泥量測記錄</title>
                     <style>
                         @page WordSection1 { size: 21.0cm 29.7cm; margin: 1.27cm; mso-header-margin: 1.27cm; mso-footer-margin: 1.27cm; }
                         div.WordSection1 { page: WordSection1; }
@@ -166,7 +166,7 @@
                 </head>
                 <body>
                     <div class="WordSection1">
-                        <div style="text-align: center; font-size: 16pt; font-weight: bold; margin-bottom: 15px; font-family: '標楷體', 'BiauKai', serif;">竹南污水處理廠 - 底泥量測深度紀錄</div>
+                        <div style="text-align: center; font-size: 16pt; font-weight: bold; margin-bottom: 15px; font-family: '標楷體', 'BiauKai', serif;">底泥量測深度計錄</div>
                         <div style="font-size: 12pt; margin-bottom: 20px; font-family: '標楷體', 'BiauKai', serif;">日期：${date} &nbsp;&nbsp;&nbsp;&nbsp; 量測人員：${operator}</div>
                         
                         ${phase1Html}
@@ -187,7 +187,7 @@
             link.href = url;
             // 若名字空白，檔名就只顯示日期
             const fileNameSuffix = operator ? `_${operator}` : '';
-            link.download = `竹南廠_底泥紀錄_${date}${fileNameSuffix}.doc`;
+            link.download = `底泥計錄_${date}${fileNameSuffix}.doc`;
             
             document.body.appendChild(link);
             link.click();
