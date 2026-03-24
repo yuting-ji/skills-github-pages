@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>單元設備異常狀況記錄表</title>
+    <title>單元設備異常狀況紀錄表</title>
     <style>
         body {
             font-family: '微軟正黑體', Arial, sans-serif;
@@ -161,7 +161,7 @@
 <body>
 
 <div class="container" id="exportContent">
-    <h2>單元設備異常狀況記錄表</h2>
+    <h2>單元設備異常狀況紀錄表</h2>
     
     <div class="header-info">
         <div>日期：<input type="date" id="recordDate"></div>
@@ -293,7 +293,7 @@
               xmlns='http://www.w3.org/TR/REC-html40'>
         <head>
             <meta charset='utf-8'>
-            <title>單元設備異常記錄表</title>
+            <title>單元設備異常紀錄表</title>
             <style>
                 @page WordSection1 {
                     size: 841.9pt 595.3pt; /* A4 橫式 */
@@ -333,7 +333,7 @@
         // 檔名加上時間戳記
         let timestamp = getTimestamp();
         fileDownload.href = url;
-        fileDownload.download = `單元設備異常狀況記錄表_${timestamp}.doc`;
+        fileDownload.download = `單元設備異常狀況紀錄表_${timestamp}.doc`;
         
         fileDownload.click();
         document.body.removeChild(fileDownload);
