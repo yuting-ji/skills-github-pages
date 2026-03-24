@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>竹南污水處理廠 - 水質採樣紀錄表</title>
+    <title>水質採樣計錄表</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, 'LiHei Pro', sans-serif;
@@ -161,7 +161,7 @@
 <body>
 
 <div class="container" id="captureArea">
-    <h2>竹南污水處理廠採樣紀錄</h2>
+    <h2>水質採樣計錄</h2>
     
     <form id="samplingForm">
         <div class="form-group">
@@ -174,7 +174,7 @@
         </div>
         <div class="form-group">
             <label>採樣地點:</label>
-            <input type="text" id="location" name="location" placeholder="例如: T01調節池 (南側1+2池)">
+            <input type="text" id="location" name="location" placeholder="例如: D01放流口">
         </div>
         
         <div style="display: flex; gap: 10px;">
@@ -365,7 +365,7 @@
             <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
             <head>
                 <meta charset='utf-8'>
-                <title>竹南污水處理廠採樣紀錄</title>
+                <title>水質採樣計錄</title>
                 <style>
                     body { font-family: '標楷體', '微軟正黑體', sans-serif; }
                     table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
@@ -374,7 +374,7 @@
                 </style>
             </head>
             <body>
-                <h2>竹南污水處理廠採樣紀錄</h2>
+                <h2>水質採樣計錄</h2>
                 <table>
                     <tr><th width="20%">採樣單位</th><td width="30%">${unit}</td><th width="20%">送樣人員</th><td width="30%">${deliverer}</td></tr>
                     <tr><th>採樣地點</th><td colspan="3">${location}</td></tr>
@@ -400,7 +400,7 @@
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `採樣紀錄_${date ? date : '未命名'}.doc`;
+        link.download = `採樣計錄_${date ? date : '未命名'}.doc`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
