@@ -168,7 +168,7 @@
 
     <div class="container" id="capture-area">
         
-        <div class="section-title">🏭 現場大廠加藥計算 (日用量)</div>
+        <div class="section-title">🏭 現場加藥計算 (日用量)</div>
         <div class="card">
             <h2>PAC 加藥計算</h2>
             <div class="input-group">
@@ -204,14 +204,14 @@
         <div class="section-title">⚙️ 連續加藥機流量設定 (ml/min)</div>
         
         <div class="card pump-test">
-            <h2>PAC 機台流量設定</h2>
+            <h2>PAC 出藥量設定</h2>
             <div class="input-group">
                 <label>廢水量 (噸/小時)</label>
                 <input type="number" id="pump-pac-flow" placeholder="例: 60" oninput="calcPumpPAC('flow')">
             </div>
             <div class="input-group">
                 <label>藥劑濃度 (%)</label>
-                <input type="number" id="pump-pac-conc" value="1.0" step="0.1" oninput="calcPumpPAC('conc')">
+                <input type="number" id="pump-pac-conc" value="9.0" step="0.1" oninput="calcPumpPAC('conc')">
             </div>
             <div class="input-group">
                 <label>目標用量 (mg/L)</label>
@@ -224,14 +224,14 @@
         </div>
 
         <div class="card pump-test">
-            <h2>Polymer 機台流量設定</h2>
+            <h2>Polymer 出藥量設定</h2>
             <div class="input-group">
                 <label>廢水量 (噸/小時)</label>
                 <input type="number" id="pump-poly-flow" placeholder="例: 60" oninput="calcPumpPoly('flow')">
             </div>
             <div class="input-group">
                 <label>藥劑濃度 (%)</label>
-                <input type="number" id="pump-poly-conc" value="0.10" step="0.01" oninput="calcPumpPoly('conc')">
+                <input type="number" id="pump-poly-conc" value="90.0" step="0.01" oninput="calcPumpPoly('conc')">
             </div>
             <div class="input-group">
                 <label>目標用量 (mg/L)</label>
@@ -252,7 +252,7 @@
             </div>
             <div class="input-group">
                 <label>藥劑濃度 (%)</label>
-                <input type="number" id="jar-pac-conc" value="1.0" step="0.1" oninput="calcJarPAC('dose')">
+                <input type="number" id="jar-pac-conc" value="9.0" step="0.1" oninput="calcJarPAC('dose')">
             </div>
             <div class="input-group">
                 <label>目標用量 (mg/L)</label>
@@ -272,7 +272,7 @@
             </div>
             <div class="input-group">
                 <label>藥劑濃度 (%)</label>
-                <input type="number" id="jar-poly-conc" value="0.10" step="0.01" oninput="calcJarPoly('dose')">
+                <input type="number" id="jar-poly-conc" value="90.0" step="0.01" oninput="calcJarPoly('dose')">
             </div>
             <div class="input-group">
                 <label>目標用量 (mg/L)</label>
