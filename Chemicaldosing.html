@@ -317,7 +317,7 @@
     </div>
 
     <script>
-        /* ================= 1. 現場大廠計算邏輯 ================= */
+        /* ================= 1. 現場日加藥量計算邏輯 ================= */
         function calcPAC(changed) {
             let vol = parseFloat(document.getElementById('pac-vol').value);
             let conc = parseFloat(document.getElementById('pac-conc').value);
@@ -477,7 +477,7 @@
         /* ================= 系統功能 ================= */
         function clearAll() {
             if(confirm("確定要清除所有輸入的數值嗎？")) {
-                // 1. 大廠重置
+                // 1. 日加藥量重置
                 document.getElementById('pac-vol').value = '';
                 document.getElementById('pac-conc').value = '0.01';
                 document.getElementById('pac-amt').value = '';
@@ -487,21 +487,21 @@
                 
                 // 2. 加藥機重置
                 document.getElementById('pump-pac-flow').value = '';
-                document.getElementById('pump-pac-conc').value = '1.0';
-                document.getElementById('pump-pac-dose').value = '1.0';
+                document.getElementById('pump-pac-conc').value = '9.0';
+                document.getElementById('pump-pac-dose').value = '';
                 document.getElementById('pump-pac-rate').value = '';
                 document.getElementById('pump-poly-flow').value = '';
-                document.getElementById('pump-poly-conc').value = '0.10';
-                document.getElementById('pump-poly-dose').value = '0.10';
+                document.getElementById('pump-poly-conc').value = '90.0';
+                document.getElementById('pump-poly-dose').value = '';
                 document.getElementById('pump-poly-rate').value = '';
 
                 // 3. 瓶杯重置
                 document.getElementById('jar-pac-vol').value = '1000';
-                document.getElementById('jar-pac-conc').value = '1.0';
+                document.getElementById('jar-pac-conc').value = '9.0';
                 document.getElementById('jar-pac-dose').value = '';
                 document.getElementById('jar-pac-add').value = '';
                 document.getElementById('jar-poly-vol').value = '1000';
-                document.getElementById('jar-poly-conc').value = '0.10';
+                document.getElementById('jar-poly-conc').value = '90.0';
                 document.getElementById('jar-poly-dose').value = '';
                 document.getElementById('jar-poly-add').value = '';
 
@@ -539,7 +539,7 @@
                     <h2>污水處理加藥與試驗紀錄表</h2>
                     <p>記錄時間：${dateStr}</p>
                     
-                    <h3>一、現場大廠加藥 (日用量)</h3>
+                    <h3>一、現場每日加藥量</h3>
                     <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">
                         <tr>
                             <th style="background-color: #f2f2f2;">藥劑種類</th>
